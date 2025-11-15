@@ -27,3 +27,8 @@ Mirror push to new repository:
 Remove temporary local repository:
     cd ..
     rm -rf old-repository.git
+
+## Github SSH key setup:
+    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    pbcopy < ~/.ssh/id_rsa.pub
+    Past  SSH Key in github setting
