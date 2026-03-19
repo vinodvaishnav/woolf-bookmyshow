@@ -5,11 +5,14 @@ const path = require('path');
 const connectDB = require('./utils/db_connect');
 const userRoutes = require('./routes/userRoute');
 const movieRoutes = require('./routes/movieRoute');
+const cors = require('cors');
 
 try {
     connectDB(process.env.DB_NAME);
 
     const app = express();
+
+    app.use(cors());
 
     app.use('/static', express.static(path.join(__dirname, 'public')));
 

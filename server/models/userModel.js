@@ -10,12 +10,11 @@ const UserSchema = new mongoose.Schema({
         required: true,
     },
     role: {
-        type: String,
-        enum: ['user', 'admin', 'partner'],
-        required: true,
-        default: 'user'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user_roles',
+        required: true
     },
-    mobile: {
+    phone: {
         type: String,
         required: true,
     },
@@ -26,6 +25,12 @@ const UserSchema = new mongoose.Schema({
     last_name: {
         type: String,
         required: false,
+    },
+    status: {
+        type: String,
+        enum: ['active', 'inactive', 'blocked'],
+        required: true,
+        default: 'active'
     }
 }, { timestamps: true });
 
