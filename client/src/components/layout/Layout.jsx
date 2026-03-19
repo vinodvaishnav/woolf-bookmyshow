@@ -13,7 +13,8 @@ const Layout = () => {
             width: '100%',
             display: 'flex',
             alignItems: 'center',
-        }}></Header>
+        }}>
+        </Header>
         <Content style={{
             paddingBottom: '48px',
             background: token.colorBgContainer,
