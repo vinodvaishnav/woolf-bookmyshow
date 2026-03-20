@@ -1,5 +1,4 @@
 const readline = require('readline');
-
 const connectDB = require('../utils/db_connect');
 const seedPermissions = require('./permissionDataSync');
 const { createAdminUser, validateEmail, validatePassword } = require('./createAdminUser');
@@ -11,10 +10,10 @@ require('dotenv').config();
         await connectDB(process.env.DB_NAME);
         console.log('Connected to MongoDB successfully!');
 
-        // Seed permissions and admin role
+        // ======== Seed permissions and admin role ========
         await seedPermissions();
 
-        // accept user input
+        //  ======== accept user input ======== 
         const rI = readline.createInterface({
             input: process.stdin,
             output: process.stdout
@@ -22,16 +21,12 @@ require('dotenv').config();
 
         const question = (prompt) => new Promise((resolve) => rI.question(prompt, resolve));
 
+        console.log('******* Please provide details for the admin user: *****');
         const email = await question('Enter admin email: ');
         const password = await question('Enter admin password: ');
         const phone = await question('Enter admin phone number: ');
 
-        // // Create admin user
-        // const email = 'vaishnav.vinod484@gmail.com';
-        // const adminPassword = 'admin@123';
-        // const phone = "9461641427";
-
-
+        // ======== Create admin user ======== 
         if (!validateEmail(email)) {
             throw new Error('Given email Id is invalid!');
         }

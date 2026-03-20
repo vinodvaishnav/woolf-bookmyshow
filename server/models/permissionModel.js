@@ -13,7 +13,7 @@ const permissionSchema = new mongoose.Schema({
         type: String,
         required: false,
     }
-});
+}, { timestamps: true });
 
 permissionSchema.index({ module: 1, action: 1 }, { unique: true });
 

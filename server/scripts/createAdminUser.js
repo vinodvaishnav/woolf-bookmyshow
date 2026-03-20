@@ -18,9 +18,9 @@ async function createAdminUser(email, password, phone) {
             });
 
             await adminUser.save();
-            console.log('Admin user created successfully!');
+            console.log('***** Admin user created successfully! *****');
         } else {
-            console.log('Admin user already exists!');
+            console.log('***** Admin user already exists! *****');
         }
     } catch (error) {
         console.error('Error creating admin user:', error);

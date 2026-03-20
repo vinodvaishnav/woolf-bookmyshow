@@ -1,7 +1,15 @@
 const mongoose = require('mongoose');
 const MovieSchema = new mongoose.Schema(
     {
-        movie_name: {
+        name: {
+            type: String,
+            required: true,
+        },
+        description: {
+            type: String,
+            required: true,
+        },
+        poster: {
             type: String,
             required: true,
         },
@@ -9,25 +17,48 @@ const MovieSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
-        poster: {
-            type: String,
-            required: true,
-        },
-        released_on: {
+        release_date: {
             type: Date,
             required: true
         },
-        about: {
+        imdb_rating: {
+            type: Number,
+            required: false
+        },
+        imdb_comment: {
             type: String,
-            required: true,
+            required: false
         },
         genres: {
             type: String,
             required: true,
         },
-        language: {
+        languages: {
+            type: [String],
+            required: false,
+            default: ['English'],
+            set: (val) => {
+                if (typeof val === 'string') {
+                    return val.split(',').map(item => item.trim());
+                }
+                return val;
+            }
+        },
+        cast: {
+            type: [String],
+            required: false,
+            default: [],
+            set: (val) => {
+                if (typeof val === 'string') {
+                    return val.split(',').map(item => item.trim());
+                }
+                return val;
+            }
+        },
+        status: {
             type: String,
-            required: true
+            enum: ['active', 'inactive'],
+            default: 'active'
         }
     },
     { timestamps: true }

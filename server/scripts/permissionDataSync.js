@@ -25,28 +25,25 @@ async function seedPermissions() {
 
         const savedPermissions = await Promise.all(requests);
 
-        console.log('Permissions synced successfully!');
+        console.log('Added all modules and actions as permissions successfully!');
 
         const allPermissionIds = savedPermissions.map(permission => permission._id);
+
+        for (const role in ROLES) {
+            await UserRole.findOneAndUpdate(
+                { name: ROLES[role] },
+                { name: ROLES[role], permissions: [] },
+                { upsert: true, new: true }
+            );
+            console.log(`${ROLES[role]} role created successfully!`);
+        }
 
         await UserRole.findOneAndUpdate(
             { name: ROLES.ADMIN },
             { name: ROLES.ADMIN, permissions: allPermissionIds },
             { upsert: true, new: true }
         );
-
-        console.log('Admin role created successfully!');
-
-        for (const role in ROLES) {
-            if (ROLES[role] !== ROLES.ADMIN) {
-                await UserRole.findOneAndUpdate(
-                    { name: ROLES[role] },
-                    { name: ROLES[role], permissions: [] },
-                    { upsert: true, new: true }
-                );
-                console.log(`${ROLES[role]} role created successfully!`);
-            }
-        }
+        console.log('All the permissions added to the Admin role successfully!');
     } catch (error) {
         console.error('Error syncing permissions:', error);
         throw error;

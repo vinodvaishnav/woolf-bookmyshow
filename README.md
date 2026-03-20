@@ -16,6 +16,8 @@ MongoDB
 Server:
 1. Create a Mondo DB database using MongoDB Atlas. 
 2. create .env file using default.env updating your parameters
+3. run "npm run seed" command to seed permissions and other base data
+4. create test data
 
 
 ## Change Git repository

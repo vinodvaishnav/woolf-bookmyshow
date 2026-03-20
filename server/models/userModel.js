@@ -4,6 +4,7 @@ const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
     },
     password: {
         type: String,
@@ -31,7 +32,17 @@ const UserSchema = new mongoose.Schema({
         enum: ['active', 'inactive', 'blocked'],
         required: true,
         default: 'active'
-    }
+    },
+    email_verified: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    phone_verified: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
 }, { timestamps: true });
 
 // @TODO: add pre and post hooks
