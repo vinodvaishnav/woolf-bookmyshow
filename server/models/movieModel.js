@@ -7,19 +7,27 @@ const MovieSchema = new mongoose.Schema(
         },
         description: {
             type: String,
-            required: true,
+            required: false,
+        },
+        thumbnail: {
+            type: String,
+            required: false,
+            default: 'https://via.placeholder.com/150',
+            get: v => v === undefined ? 'https://via.placeholder.com/150' : v
         },
         poster: {
             type: String,
-            required: true,
+            required: false,
+            default: 'https://via.placeholder.com/150',
+            get: v => v === undefined ? 'https://via.placeholder.com/150' : v
         },
         duration: {
             type: Number,
-            required: true,
+            required: false,
         },
         release_date: {
             type: Date,
-            required: true
+            required: false,
         },
         imdb_rating: {
             type: Number,
@@ -31,7 +39,7 @@ const MovieSchema = new mongoose.Schema(
         },
         genres: {
             type: String,
-            required: true,
+            required: false,
         },
         languages: {
             type: [String],
@@ -58,10 +66,10 @@ const MovieSchema = new mongoose.Schema(
         status: {
             type: String,
             enum: ['active', 'inactive'],
-            default: 'active'
+            default: 'inactive'
         }
     },
-    { timestamps: true }
+    { toJSON: { getters: true }, toObject: { getters: true }, timestamps: true }
 );
 
 // @TODO: Add pre and post hooks.

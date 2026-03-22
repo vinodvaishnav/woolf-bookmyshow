@@ -1,22 +1,44 @@
-const movieModel = require('../models/movieModel');
+const movieService = require('../services/movie.service');
 
-const getMovies = (req, res) => {
-    res.send([{
-        title: 'Movie Name 1'
-    },
-    {
-        title: 'Movie Name 2'
-    }]
-    );
+const getCarouselData = async (req, res) => {
+    try {
+        const carouselData = await movieService.getMovieCarouselData();
+        res.send(carouselData);
+    } catch (error) {
+        console.error('Error fetching carousel data:', error);
+        res.status(500).send({ message: 'Error fetching carousel data' });
+    }
 }
 
-const getMovieDetail = (req, res) => {
-    res.send({
-        title: 'Movie Name 1'
-    })
+const getMovies = async (req, res) => {
+    try {
+        const movies = await movieService.getMovies();
+        res.send(movies);
+    } catch (error) {
+        // Log the error for debugging purposes 
+        // @TODO: Use a proper logging mechanism instead of console.error in production
+        console.error('Error fetching movies:', error);
+        res.status(500).send({ message: 'Error fetching movies' });
+    }
+
+    return;
 }
 
-const addMovie = (req, res) => {
+const getMovieDetail = async (req, res) => {
+    try {
+        const movieId = req.params.movieId;
+        const movie = await movieService.getMovieDetail(movieId);
+        if (!movie) {
+            return res.status(404).send({ message: 'Movie not found' });
+        }
+        res.send(movie);
+    } catch (error) {
+        console.error('Error fetching movie details:', error);
+        res.status(500).send({ message: 'Error fetching movie details' });
+    }
+}
+
+const addMovie = async (req, res) => {
     let inputData = req.body;
 
     // login required to add a movie.
@@ -30,5 +52,6 @@ const addMovie = (req, res) => {
 module.exports = {
     getMovies,
     getMovieDetail,
-    addMovie
+    addMovie,
+    getCarouselData
 }
