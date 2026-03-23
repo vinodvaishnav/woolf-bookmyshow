@@ -17,21 +17,22 @@ require('dotenv').config();
         await connectDB(process.env.DB_NAME);
         console.log('Database connection established successfully!');
 
-        await createUser();
+        // await createUser();
 
-        await createMovie();
+        // await createMovie();
 
         const regionId = await createRegion('Bengaluru');
         console.log('Region created successfully!');
 
-        const theaterId = await createTheater('PVR', regionId);
+        const theaterId = await createTheater('INOX', regionId);
         console.log('Theater created successfully!');
 
-        const seatType1 = await createSeatType(theaterId, 'Regular');
-        const seatType2 = await createSeatType(theaterId, 'Premium');
+        const seatType1 = await createSeatType(theaterId, 'Diamond');
+        const seatType2 = await createSeatType(theaterId, 'Gold');
         console.log('Seat types created successfully!');
 
-        const screen = await createScreen(theaterId, 'Screen 1', 10, seatType1._id);
+        const screen = await createScreen(theaterId, 'Entertenment', 18, seatType1._id, seatType2._id);
+        const screen2 = await createScreen(theaterId, 'Oracle', 24, seatType1._id, seatType2._id);
         console.log('Screen created successfully!');
         // @TODO: Create new test user
         // @TODO: Add a region
@@ -48,10 +49,10 @@ async function createUser() {
     const userRole = await userRoleModel.findOne({ name: ROLES.USER });
     const hashedPassword = await encryptPassword('User@123');
     const user = new userModel({
-        first_name: 'Test',
-        last_name: 'User',
-        phone: '9123456789',
-        email: 'test.user@example.com',
+        first_name: 'Testt',
+        last_name: 'User2',
+        phone: '9123456788',
+        email: 'test.user2@example.com',
         password: hashedPassword,
         role: userRole._id
     });
@@ -146,7 +147,7 @@ async function createMovie() {
     console.log('Movies created successfully!');
 }
 
-async function createScreen(theaterId, name, totalSeats, seatTypeId) {
+async function createScreen(theaterId, name, totalSeats, seatTypeId, seatTypeId2) {
     const screen = new screenModel({
         theater: theaterId,
         name: name,
@@ -154,7 +155,7 @@ async function createScreen(theaterId, name, totalSeats, seatTypeId) {
         seats: Array.from({ length: totalSeats }, (_, i) => ({
             number: i + 1,
             row: String.fromCharCode(65 + Math.floor(i / 4)), // Rows A, B, C, etc.
-            type: seatTypeId
+            type: i < totalSeats / 2 ? seatTypeId : seatTypeId2
         }))
     });
 
