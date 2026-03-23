@@ -176,8 +176,23 @@ async function addSeats() {
     // optional: Every seat may also have position information like row and column number (Start row, Start Column, End Row, End Column) which can be used for better seat selection by users
 }
 
-async function createShow() {
+async function createShow(theaterId, movieId, screenId, showTime) {
     // Show will be created for a movie on a particular screen at a particular time
     // along with show it will create show_seat_types having pricing for each seat type for that show
     // Add show Seats for that show based on the screen and seat types available for that screen
+
+    // get the screen details to add all the seats to show object
+
+
+
+    // In Admin Adding a show is multi step process
+    // 1. Admin will select the movie for which he wants to add the show
+    // 2. Admin will select screen for that show
+    // 3. Show all the details about the screen along with the seat types available for that screen to admin (SeatType can be a calculated field in screen model which will fetch all the seat types available for that screen based on the seats added for that screen)
+    // 4. Admin will select the show time for that show (Optional System can also suggest the show time based on the existing shows for that screen and movie duration)
+    // 5. Admin will set the price for each seat type for that show
+    // 6. Admin will confirm and add the show
+
 }
+
+
