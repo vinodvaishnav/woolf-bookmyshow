@@ -7,12 +7,12 @@ const MovieLink = ({ id, title, poster }) => <Link to={`movie/${id}`}>
 </Link>
 
 const MovieCard = ({ movie }) => {
-    const { id, title, poster, genres } = movie;
+    const { id, name: title, poster, thumbnail, genres } = movie;
 
     return (
         <Card
             hoverable
-            cover={<MovieLink id={id} poster={poster} title={title} />}
+            cover={<MovieLink id={id} poster={thumbnail} title={title} />}
             style={{ width: '240px' }}
         >
             <Card.Meta title={title} description={genres} />

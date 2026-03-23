@@ -4,29 +4,33 @@ import MovieCard from "../components/MovieCard";
 import { Flex, Carousel } from 'antd';
 
 import { useSelector, useDispatch } from "react-redux";
+import { getMovies } from "../redux/movieSlice";
 
 const Home = () => {
-    const [movies, setMovies] = useState([]);
-    const [loading, setLoading] = useState(false);
+    // const [movies, setMovies] = useState([]);
+    // const [loading, setLoading] = useState(false);
     const [error, setError] = useState();
 
-    const { placeHolders } = useSelector(store => store.movieState);
-    console.log(placeHolders)
+    const { loading, movies } = useSelector(store => store.movieState);
+    const dispatch = useDispatch();
+    console.log(movies);
 
     useEffect(() => {
-        setLoading(true);
-        apiClient.get('movies')
-            .then(response => {
-                setMovies(response?.data);
-                console.log(response);
-            })
-            .catch(err => {
-                console.log(err?.response?.data);
-                setError(err?.response?.data?.error);
-            })
-            .finally(() => {
-                setLoading(false)
-            });
+        dispatch(getMovies());
+
+        // setLoading(true);
+        // apiClient.get('movies')
+        //     .then(response => {
+        //         setMovies(response?.data);
+        //         console.log(response);
+        //     })
+        //     .catch(err => {
+        //         console.log(err?.response?.data);
+        //         setError(err?.response?.data?.error);
+        //     })
+        //     .finally(() => {
+        //         setLoading(false)
+        //     });
     }, []);
 
     const contentStyle = {
@@ -55,7 +59,7 @@ const Home = () => {
                 {
                     loading ? <div className="loading">Loading...</div> :
                         error ? <div className="error">{error}</div> :
-                            placeHolders.map((movie, id) => <MovieCard movie={movie} key={id} />)
+                            movies.map((movie, id) => <MovieCard movie={movie} key={id} />)
                 }
             </Flex>
         </div>
