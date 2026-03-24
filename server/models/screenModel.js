@@ -1,27 +1,4 @@
 const mongoose = require('mongoose');
-const SEAT_TYPES = require('../constants/seatType');
-
-const SeatSchema = new mongoose.Schema({
-    number: {
-        type: String,
-        required: true,
-    },
-    row: {
-        type: String,
-        required: true,
-    },
-    type: {
-        type: mongoose.Schema.Types.ObjectId,
-        refs: 'seat_types',
-        required: true,
-    },
-    status: {
-        type: String,
-        enum: ['available', 'booked', 'blocked', 'maintenance'],
-        required: true,
-        default: 'available'
-    }
-});
 
 const ScreenSchema = new mongoose.Schema({
     name: {
@@ -37,7 +14,11 @@ const ScreenSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    seats: [SeatSchema],
+    screenType: [{
+        type: String,
+        enum: ['2D', '3D', 'IMAX'],
+        required: true,
+    }],
     status: {
         type: String,
         enum: ['active', 'inactive'],
