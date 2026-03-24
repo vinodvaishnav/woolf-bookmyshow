@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { validate } = require('./permissionModel');
 
 const showSchema = new mongoose.Schema({
     movie: {
@@ -23,9 +22,9 @@ const showSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['active', 'cancelled'],
+        enum: ['active', 'inactive', 'cancelled'],
         required: true,
-        default: 'active'
+        default: 'inactive'
     },
     pricing: [{
         seat_type: {
@@ -35,7 +34,7 @@ const showSchema = new mongoose.Schema({
         },
         price: {
             type: Number,
-            required: true
+            default: -1,
         }
     }]
 }, { timestamps: true });
