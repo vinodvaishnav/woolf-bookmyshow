@@ -6,7 +6,7 @@ const getMovies = async (where = null, limit = 20, orderBy = "_id", direction = 
     // Manage Movie Listings.
     const movies = await MovieModel
         .find(where)
-        .select('id name release_date thumbnail poster')
+        .select('id name releaseDate thumbnail poster')
         .limit(limit)
         .sort({
             [orderBy]: direction
@@ -42,7 +42,7 @@ const getMovieCarouselData = async () => {
     // Return limited details of movies (id, title, release date, timestamp, thumbnail) for carousel on home page.
     const carouselMovies = await MovieModel
         .find({ status: 'active' })
-        .select('id name release_date poster')
+        .select('id name releaseDate poster')
         .sort({ releaseDate: -1 })
         .limit(10);
 
@@ -61,7 +61,7 @@ const addMovie = async (req, res) => {
         const newMovie = new MovieModel({
             title: title,
             description: description,
-            release_date: releaseDate,
+            releaseDate: releaseDate,
             poster: posterUrl,
             thumbnail: thumbnailUrl,
 

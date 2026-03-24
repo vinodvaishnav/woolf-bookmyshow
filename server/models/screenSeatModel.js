@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const SeatSchema = new mongoose.Schema({
-    screen_id: {
+    screen: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'screens',
         required: true
@@ -11,12 +11,12 @@ const SeatSchema = new mongoose.Schema({
         required: true,
     },
     number: {
-        type: String,
+        type: Number,
         required: true,
     },
     type: {
         type: mongoose.Schema.Types.ObjectId,
-        refs: 'seat_types',
+        ref: 'seat_types',
         required: true,
     },
     status: {
@@ -25,19 +25,19 @@ const SeatSchema = new mongoose.Schema({
         required: true,
         default: 'available'
     }
-});
+}, { timestamps: true });
 
-SeatSchema.index({ screen_id: 1, row: 1, number: 1 }, { unique: true });
+SeatSchema.index({ screen: 1, row: 1, number: 1 }, { unique: true });
 
-SeatSchema.virtual().get('seat_types').get(function () {
-    const seatTypes = new Set();
-    this.seats.forEach(seat => {
-        seatTypes.add(seat.type.toString());
-    });
+const ScreenSeatModel = mongoose.model('screen_seats', SeatSchema);
 
-    return seatTypes;
-});
+module.exports = ScreenSeatModel;
 
-const Seat = mongoose.model('seats', SeatSchema);
+// SeatSchema.virtual('seatTypes').get(function () {
+//     const seatTypes = new Set();
+//     this.seats.forEach(seat => {
+//         seatTypes.add(seat.type.toString());
+//     });
 
-module.exports = Seat;
+//     return seatTypes;
+// });

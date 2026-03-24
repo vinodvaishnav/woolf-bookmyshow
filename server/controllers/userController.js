@@ -1,24 +1,9 @@
 const UserModel = require('../models/userModel');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-
-const encryptPassword = async (password) => {
-    console.log(password);
-    let encryptedPsw = await bcrypt.hash(password, 10);
-    return encryptedPsw;
-}
-
-const comparePassword = async (password, hash) => {
-    return await bcrypt.compare(password, hash);
-}
+const { encryptPassword, comparePassword } = require('../utils/encryptPassword');
+const { generateToken } = require('../utils/authToken');
 
 const validateUserData = (userInput) => {
     return true;
-}
-
-const generateToken = (user) => {
-    const authToken = jwt.sign(user, process.env.JWT_TOKEN, { expiresIn: "15m" });
-    return authToken;
 }
 
 const sendRegistrationMail = (user) => {

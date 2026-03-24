@@ -25,15 +25,15 @@ const MovieSchema = new mongoose.Schema(
             type: Number,
             required: false,
         },
-        release_date: {
+        releaseDate: {
             type: Date,
             required: false,
         },
-        imdb_rating: {
+        imdbRating: {
             type: Number,
             required: false
         },
-        imdb_comment: {
+        imdbComment: {
             type: String,
             required: false
         },

@@ -19,11 +19,11 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    first_name: {
+    firstName: {
         type: String,
         required: true,
     },
-    last_name: {
+    lastName: {
         type: String,
         required: false,
     },
@@ -33,12 +33,12 @@ const UserSchema = new mongoose.Schema({
         required: true,
         default: 'active'
     },
-    email_verified: {
+    emailVerified: {
         type: Boolean,
         required: true,
         default: false
     },
-    phone_verified: {
+    phoneVerified: {
         type: Boolean,
         required: true,
         default: false

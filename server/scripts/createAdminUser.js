@@ -1,7 +1,7 @@
 const userModel = require('../models/userModel');
 const userRole = require('../models/userRoleModel');
 const ROLES = require('../constants/roles');
-const encryptPassword = require('../utils/encryptPassword');
+const { encryptPassword } = require('../utils/encryptPassword');
 
 async function createAdminUser(email, password, phone) {
     try {
@@ -10,7 +10,7 @@ async function createAdminUser(email, password, phone) {
             const hashedPassword = await encryptPassword(password);
             const role = await userRole.findOne({ name: ROLES.ADMIN });
             const adminUser = new userModel({
-                first_name: 'Admin',
+                firstName: 'Admin',
                 email: email,
                 password: hashedPassword,
                 phone: phone,

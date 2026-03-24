@@ -7,8 +7,10 @@ const screenModel = require('../models/screenModel');
 const seatTypeModel = require('../models/seatTypeModel');
 const userModel = require('../models/userModel');
 const userRoleModel = require('../models/userRoleModel');
-const encryptPassword = require('../utils/encryptPassword');
+const { encryptPassword } = require('../utils/encryptPassword');
 const ROLES = require('../constants/roles');
+const screenSeatModel = require('../models/screenSeatModel');
+const mongoose = require('mongoose');
 
 require('dotenv').config();
 
@@ -18,26 +20,59 @@ require('dotenv').config();
         console.log('Database connection established successfully!');
 
         // await createUser();
-
         // await createMovie();
 
-        const regionId = await createRegion('Bengaluru');
+        const regionId = await createRegion('Benguluru');
+        console.log(regionId);
         console.log('Region created successfully!');
 
+        const regionId2 = await createRegion('Delhi');
+        console.log(regionId2);
+        console.log('Region 2 created successfully!');
+
+        // Theater 1 Setup
+        // INOX  
+        // -> seatType(Diamon: , Gold: , Silver:)
+        // -> screen1, screen2
         const theaterId = await createTheater('INOX', regionId);
         console.log('Theater created successfully!');
 
         const seatType1 = await createSeatType(theaterId, 'Diamond');
         const seatType2 = await createSeatType(theaterId, 'Gold');
+        const seatType3 = await createSeatType(theaterId, 'Silver');
         console.log('Seat types created successfully!');
 
-        const screen = await createScreen(theaterId, 'Entertenment', 18, seatType1._id, seatType2._id);
-        const screen2 = await createScreen(theaterId, 'Oracle', 24, seatType1._id, seatType2._id);
+        const screen = await createScreen(theaterId, 'Screen1', 50);
+        const screen2 = await createScreen(theaterId, 'Screen2', 16);
         console.log('Screen created successfully!');
-        // @TODO: Create new test user
-        // @TODO: Add a region
-        // @TODO: Add new Theater and partner user to manage the theater
-        // @TODO: Add few movies, screens, shows, and seats for testing
+
+        await addSeatsToScreen(screen._id, 10, seatType3._id, 10, 65);
+        await addSeatsToScreen(screen._id, 20, seatType2._id, 10, 66);
+        await addSeatsToScreen(screen._id, 20, seatType1._id, 10, 68);
+
+        await addSeatsToScreen(screen2._id, 16, seatType2._id, 4, 65);
+
+        // Theater 2 Setup
+        // Maha Laxmi
+        // -> screen1(69c0a76b7c22b6f529659f62)
+        // -> seatype(Premium: 69c0a76b7c22b6f529659f5e, BOX: 69c0a76b7c22b6f529659f60)
+        const theaterId2 = await createTheater('Maha Laxmi Theater', regionId);
+        console.log('Theater 2 created successfully!');
+
+        const seatType4 = await createSeatType(theaterId2, 'Premium');
+        const seatType5 = await createSeatType(theaterId2, 'BOX');
+        console.log('Seat types created successfully!');
+
+        const screen3 = await createScreen(theaterId2, 'Page 3', 48);
+        console.log('Screen created successfully!');
+
+        await addSeatsToScreen(screen3._id, 32, seatType4._id, 8, 65);
+        await addSeatsToScreen(screen3._id, 16, seatType5._id, 8, 69);
+
+        // PVR (69bd94cd819f33ec6154c1ef) 
+        // -> screen1(69bd94ce455596e906565ed2) 
+        // -> SeatType1(Regular: 69bd94ce455596e906565ece, Premium: 69bd94ce455596e906565ed0)
+
         process.exit(0);
     } catch (error) {
         console.error('Error while connecting to database:', error);
@@ -49,8 +84,8 @@ async function createUser() {
     const userRole = await userRoleModel.findOne({ name: ROLES.USER });
     const hashedPassword = await encryptPassword('User@123');
     const user = new userModel({
-        first_name: 'Testt',
-        last_name: 'User2',
+        firstName: 'Testt',
+        lastName: 'User2',
         phone: '9123456788',
         email: 'test.user2@example.com',
         password: hashedPassword,
@@ -86,60 +121,65 @@ async function createMovie() {
         description: 'The final battle of the Infinity Saga',
         duration: 181,
         poster: 'https:\/\/image.tmdb.org\/t\/p\/original\/jhZlXSnFUpNiLAek9EkPrtLEWQI.jpg',
+        thumbnail: 'https:\/\/image.tmdb.org\/t\/p\/original\/jhZlXSnFUpNiLAek9EkPrtLEWQI.jpg',
         cast: ['Robert Downey Jr.', 'Chris Evans', 'Mark Ruffalo', 'Chris Hemsworth'],
         languages: 'English',
         genres: 'Action, Adventure, Sci-Fi',
-        release_date: new Date('2019-04-26'),
-        imdb_rating: 8.4,
-        imdb_comment: 'A fitting end to the Infinity Saga with emotional depth and thrilling action sequences.'
+        releaseDate: new Date('2019-04-26'),
+        imdbRating: 8.4,
+        imdbComment: 'A fitting end to the Infinity Saga with emotional depth and thrilling action sequences.'
     },
     {
         name: 'Inception',
         description: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
         duration: 148,
-        poster: 'https:\/\/image.tmdb.org\/t\/p\/original\/qmDpIHrmpJINaRKAfWQfftjCdyi.jpg',
+        poster: 'https://m.media-amazon.com/images/I/71thFiIUSpL._AC_UF894,1000_QL80_.jpg',
+        thumbnail: 'https://m.media-amazon.com/images/I/71thFiIUSpL._AC_UF894,1000_QL80_.jpg',
         cast: ['Leonardo DiCaprio', 'Joseph Gordon-Levitt', 'Ellen Page', 'Tom Hardy'],
         languages: 'English',
         genres: 'Action, Adventure, Sci-Fi',
-        release_date: new Date('2010-07-16'),
-        imdb_rating: 8.8,
-        imdb_comment: 'A mind-bending thriller that blurs the line between dreams and reality with stunning visuals and a complex narrative.'
+        releaseDate: new Date('2010-07-16'),
+        imdbRating: 8.8,
+        imdbComment: 'A mind-bending thriller that blurs the line between dreams and reality with stunning visuals and a complex narrative.'
     },
     {
         name: 'The Dark Knight',
         description: 'When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham. The Dark Knight must accept one of the greatest psychological and physical tests of his ability to fight injustice.',
         duration: 152,
         poster: 'https:\/\/image.tmdb.org\/t\/p\/original\/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
+        thumbnail: 'https:\/\/image.tmdb.org\/t\/p\/original\/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
         cast: ['Christian Bale', 'Heath Ledger', 'Aaron Eckhart', 'Michael Caine'],
         languages: 'English',
         genres: 'Action, Crime, Drama',
-        release_date: new Date('2008-07-18'),
-        imdb_rating: 9.0,
-        imdb_comment: 'A dark and gripping superhero film with a legendary performance by Heath Ledger as the Joker.'
+        releaseDate: new Date('2008-07-18'),
+        imdbRating: 9.0,
+        imdbComment: 'A dark and gripping superhero film with a legendary performance by Heath Ledger as the Joker.'
     },
     {
         name: '3Idiots',
         description: 'Two friends are searching for their long lost companion. They revisit their college days and recall the memories of their friend who inspired them to think differently, even as the rest of the world called them "idiots".',
         duration: 170,
-        poster: 'https:\/\/image.tmdb.org\/t\/p\/original\/oBgRCpAbtMpk1vS2ScJqM7TjGZ.jpg',
+        poster: 'https://wallpapercave.com/wp/wp6568176.jpg',
+        thumbnail: 'https://wallpapercave.com/wp/wp6568176.jpg',
         cast: ['Aamir Khan', 'R. Madhavan', 'Sharman Joshi', 'Kareena Kapoor'],
         languages: 'Hindi',
         genres: 'Comedy, Drama',
-        release_date: new Date('2009-12-25'),
-        imdb_rating: 8.4,
-        imdb_comment: 'A heartwarming and thought-provoking film that challenges the traditional education system with humor and emotion.'
+        releaseDate: new Date('2009-12-25'),
+        imdbRating: 8.4,
+        imdbComment: 'A heartwarming and thought-provoking film that challenges the traditional education system with humor and emotion.'
     },
     {
         name: 'Jindgi Na Milegi Dobara',
         description: 'Three friends embark on a journey to find their lost friend, leading them through a series of adventures and life lessons.',
         duration: 170,
-        poster: 'https:\/\/image.tmdb.org\/t\/p\/original\/oBgRCpAbtMpk1vS2ScJqM7TjGZ.jpg',
+        poster: 'https://m.media-amazon.com/images/M/MV5BOGIzYzg5NzItNDRkYS00NmIzLTk3NzQtZWYwY2VlZDhiYWQ4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+        thumbnail: 'https://m.media-amazon.com/images/M/MV5BOGIzYzg5NzItNDRkYS00NmIzLTk3NzQtZWYwY2VlZDhiYWQ4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
         cast: ['Hrithik Roshan', 'Ranbir Kapoor', 'Arjun Rampal'],
         languages: 'Hindi',
         genres: 'Comedy, Drama',
-        release_date: new Date('2011-08-12'),
-        imdb_rating: 8.2,
-        imdb_comment: 'A fun and engaging film that explores themes of friendship and life choices with great performances.'
+        releaseDate: new Date('2011-08-12'),
+        imdbRating: 8.2,
+        imdbComment: 'A fun and engaging film that explores themes of friendship and life choices with great performances.'
     }
     ];
     await movieModel.insertMany(movies);
@@ -147,16 +187,12 @@ async function createMovie() {
     console.log('Movies created successfully!');
 }
 
-async function createScreen(theaterId, name, totalSeats, seatTypeId, seatTypeId2) {
+async function createScreen(theaterId, name, totalSeats, screenType = '3D') {
     const screen = new screenModel({
         theater: theaterId,
         name: name,
         totalSeats: totalSeats,
-        seats: Array.from({ length: totalSeats }, (_, i) => ({
-            number: i + 1,
-            row: String.fromCharCode(65 + Math.floor(i / 4)), // Rows A, B, C, etc.
-            type: i < totalSeats / 2 ? seatTypeId : seatTypeId2
-        }))
+        screenType: screenType // This can be an array of screen types available for that screen
     });
 
     return await screen.save();
@@ -171,7 +207,30 @@ async function createSeatType(theaterId, name) {
     return await seatType.save();
 }
 
-async function addSeats() {
+async function addSeatsToScreen(screenId, totalSeats, seatTypeId, maxPerRow = 5, startRow = 65) {
+    try {
+        const seats = Array.from({ length: totalSeats }, (_, i) => ({
+            number: (Math.floor(i % maxPerRow) + 1),
+            row: String.fromCharCode(startRow + Math.floor(i / maxPerRow)), // Rows A, B, C, etc.
+            type: seatTypeId,
+            screen: screenId
+        }));
+
+        console.log('Creating seats for screen:', screenId, 'count:', seats.length);
+        const result = await screenSeatModel.insertMany(seats, { ordered: false });
+
+        console.log('Seats added successfully!', result.length, 'records.');
+    } catch (error) {
+        if (error.code === 11000) {
+            console.warn('Duplicate seat entries found. Some seats were not added due to unique constraints.');
+        } else {
+            console.error('Error adding seats to screen:', error);
+        }
+    }
+
+    return;
+
+
     // Add seats for a particular screen and seat type
     // optional: Every seat may also have position information like row and column number (Start row, Start Column, End Row, End Column) which can be used for better seat selection by users
 }

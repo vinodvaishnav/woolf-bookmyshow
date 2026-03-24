@@ -10,7 +10,7 @@ const TheaterMovieSchema = new mongoose.Schema({
         ref: 'movies',
         required: true
     },
-    first_show_date: {
+    firstShowDate: {
         type: Date,
         required: false,
     }

@@ -2,22 +2,22 @@ const mongoose = require('mongoose');
 const { validate } = require('./permissionModel');
 
 const showSchema = new mongoose.Schema({
-    movie_id: {
+    movie: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'movies',
         required: true
     },
-    theater_id: {
+    theater: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'theaters',
         required: true
     },
-    screen_id: {
+    screen: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'screens',
         required: true
     },
-    show_time: {
+    showTime: {
         type: Date,
         required: true
     },
@@ -43,7 +43,7 @@ const showSchema = new mongoose.Schema({
 // It make show unique for a screen at a given time but only if it's active, 
 // allowing multiple cancelled shows at the same time.
 showSchema.index(
-    { screen_id: 1, show_time: 1 },
+    { screen: 1, showTime: 1 },
     {
         unique: true,
         partialFilterExpression: { status: 'active' }

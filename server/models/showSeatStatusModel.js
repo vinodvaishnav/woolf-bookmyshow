@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 const showSchema = new mongoose.Schema({
-    show_id: {
+    show: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'shows',
         required: true
     },
-    seat_id: {
+    seat: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'seats',
         required: true
@@ -19,7 +19,7 @@ const showSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-showSchema.index({ show_id: 1, seat_id: 1 }, { unique: true });
+showSchema.index({ show: 1, seat: 1 }, { unique: true });
 
 const ShowSeatStatus = mongoose.model('show_seat_status', showSchema);
 

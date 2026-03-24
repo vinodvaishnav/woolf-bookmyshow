@@ -9,9 +9,12 @@ movieRouter.use((req, res, next) => {
     next();
 });
 
-movieRouter.get('/carousel', getCarouselData);
+// Movie routes
 movieRouter.get('/', getMovies);
 movieRouter.get('/:movieId', getMovieDetail);
 movieRouter.post('/', authenticateUser, addMovie);
+
+// Carousel route
+movieRouter.get('/carousel', getCarouselData);
 
 module.exports = movieRouter;

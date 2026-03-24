@@ -14,11 +14,11 @@ const ScreenSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    screenType: [{
+    screenType: {
         type: String,
         enum: ['2D', '3D', 'IMAX'],
         required: true,
-    }],
+    },
     status: {
         type: String,
         enum: ['active', 'inactive'],
