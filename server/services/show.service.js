@@ -11,27 +11,38 @@ const createShow = async (theaterId, movieId, screenId, showTime = null) => {
     // Return the newly created show document with populated movie, theater, screen, and pricing details.
 
     // As price are not set yet so keep the show object in inactive state and update it to active once price is set for all seat types.
+    console.log("createShow theaterId: ", theaterId, " movieId: ", movieId, " screenId: ", screenId, " showTime: ", showTime);
 }
 
 const updatePricing = async (showId, seatTypePriceMap = []) => {
     // Fetch the show document by showId and update the price for the given seatTypeId in pricing entry.
     // If price is set for all seat types then update the show status to active.
     // return await showModel.findByIdAndUpdate(showId, { $set: { 'pricing.$[elem].price': price } }, { new: true, arrayFilters: [{ 'elem.seat_type': seatTypeId }] });
+    console.log("updatePricing showId: ", showId, " seatTypePriceMap: ", seatTypePriceMap);
 }
 
 const activateShow = async (showId) => {
     // Fetch the show document by showId and check if price is set for all seat types in pricing entry, if not throw an error.
-    return await showModel.findByIdAndUpdate(showId, { status: 'active' }, { new: false });
+    // return await showModel.findByIdAndUpdate(showId, { status: 'active' }, { new: false });
+    console.log("activateShow showId: ", showId);
+}
+
+// filter can have movie_id, theater_id, screen_id, show_time
+const findShows = async (filter = {}) => {
+    // Fetch the show documents based on the provided filter and return the list of shows with populated movie, theater, screen, and pricing details.
+    console.log("finShows filter: ", filter);
 }
 
 
-// filter can have movie_id, theater_id, screen_id, show_time
-const findShows = async (filter = {}) => { }
+const getShowSeats = async (showId) => {
+    // Fetch the show document by showId and populate the showSeat details.
+    console.log("getShowSeats showId: ", showId);
+}
 
 module.exports = {
-    addSeatTypePrices,
     activateShow,
     createShow,
     findShows,
+    getShowSeats,
     updatePricing,
 };

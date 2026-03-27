@@ -6,6 +6,7 @@ const connectDB = require('./utils/db_connect');
 const userRoutes = require('./routes/userRoute');
 const movieRoutes = require('./routes/movieRoute');
 const regionRoutes = require('./routes/regionRoute');
+const showRoutes = require('./routes/showRoute');
 const cors = require('cors');
 
 try {
@@ -30,6 +31,7 @@ try {
         res.send("Bookmyshow server...");
     });
 
+    app.use('/api/shows', showRoutes);
     app.use('/api/regions', regionRoutes);
     app.use('/api/movies', movieRoutes);
     app.use('/api/user', userRoutes);
