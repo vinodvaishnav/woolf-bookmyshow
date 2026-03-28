@@ -16,6 +16,11 @@ const showSchema = new mongoose.Schema({
         enum: ['available', 'booked', 'blocked', 'maintenance'],
         required: true,
         default: 'available'
+    },
+    statusUpdateTime: {
+        type: Date,
+        require: true,
+        default: Date.now
     }
 }, { timestamps: true });
 
