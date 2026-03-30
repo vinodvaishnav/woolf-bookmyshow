@@ -11,7 +11,7 @@ const bookingSchema = mongoose.Schema({
         ref: 'shows',
         require: true
     },
-    seats: [{
+    seats: [{ // It can be removed from here as we can get it from showSeatStatus, but keeping it here for easy access and to avoid multiple DB calls.
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'show_seat_status',
         require: true

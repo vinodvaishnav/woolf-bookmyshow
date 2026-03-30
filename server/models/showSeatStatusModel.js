@@ -17,6 +17,10 @@ const showSchema = new mongoose.Schema({
         required: true,
         default: 'available'
     },
+    booking: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'bookings',
+    },
     statusUpdateTime: {
         type: Date,
         require: true,
