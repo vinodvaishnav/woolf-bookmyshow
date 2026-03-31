@@ -15,6 +15,8 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 (async () => {
+    return;
+
     try {
         await connectDB(process.env.DB_NAME);
         console.log('Database connection established successfully!');
@@ -68,10 +70,6 @@ require('dotenv').config();
 
         await addSeatsToScreen(screen3._id, 32, seatType4._id, 8, 65);
         await addSeatsToScreen(screen3._id, 16, seatType5._id, 8, 69);
-
-        // PVR (69bd94cd819f33ec6154c1ef) 
-        // -> screen1(69bd94ce455596e906565ed2) 
-        // -> SeatType1(Regular: 69bd94ce455596e906565ece, Premium: 69bd94ce455596e906565ed0)
 
         process.exit(0);
     } catch (error) {

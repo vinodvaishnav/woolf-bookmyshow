@@ -29,14 +29,14 @@ const SeatSchema = new mongoose.Schema({
 
 SeatSchema.index({ screen: 1, row: 1, number: 1 }, { unique: true });
 
-SeatSchema.virtual('seatTypes').get(function () {
-    const seatTypes = new Set();
-    this.seats.forEach(seat => {
-        seatTypes.add(seat.type.toString());
-    });
+// SeatSchema.virtual('seatTypes').get(function () {
+//     const seatTypes = new Set();
+//     this.seats.forEach(seat => {
+//         seatTypes.add(seat.type.toString());
+//     });
 
-    return Array.from(seatTypes);
-});
+//     return Array.from(seatTypes);
+// });
 
 const ScreenSeatModel = mongoose.model('screen_seats', SeatSchema);
 

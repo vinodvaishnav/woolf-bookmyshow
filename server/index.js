@@ -3,6 +3,25 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const connectDB = require('./utils/db_connect');
+
+// Import all models to register them with mongoose
+require('./models/userModel');
+require('./models/movieModel');
+require('./models/regionModel');
+require('./models/theaterModel');
+require('./models/screenModel');
+require('./models/seatTypeModel');
+require('./models/screenSeatModel');
+require('./models/showModel');
+require('./models/showSeatStatusModel');
+require('./models/bookingModel');
+require('./models/paymentModel');
+require('./models/invoiceModel');
+require('./models/movieRatingModel');
+require('./models/permissionModel');
+require('./models/userRoleModel');
+require('./models/theaterMovie');
+
 const userRoutes = require('./routes/userRoute');
 const movieRoutes = require('./routes/movieRoute');
 const regionRoutes = require('./routes/regionRoute');

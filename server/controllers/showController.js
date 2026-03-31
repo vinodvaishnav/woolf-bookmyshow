@@ -4,6 +4,7 @@ const createShow = async (req, res) => {
     try {
         const { theaterId, movieId, screenId, showTime } = req.body;
         const show = await showService.createShow(theaterId, movieId, screenId, showTime);
+        console.log("Created show: ", show);
         res.status(201).json(show);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -34,7 +35,9 @@ const activateShow = async (req, res) => {
 const findShows = async (req, res) => {
     try {
         const filter = req.query; // Expecting query parameters for filtering
+        // console.log("Received filter: ", filter);
         const shows = await showService.findShows(filter);
+        // const shows = {};
         res.status(200).json(shows);
     } catch (error) {
         res.status(500).json({ error: error.message });
