@@ -6,6 +6,7 @@ const movieSlice = createSlice({
     initialState: {
         movies: [],
         movieDetail: null,
+        movieShows: [],
         loading: false,
         placeHolders: [
             // {
@@ -73,6 +74,13 @@ const movieSlice = createSlice({
                 ...state,
                 movieDetail: payload
             }
+        },
+        setMovieShows: (state, action) => {
+            const { payload } = action;
+            return {
+                ...state,
+                movieShows: payload
+            }
         }
     }
 });
@@ -97,6 +105,19 @@ export const getMovieDetail = (movieId) => async (dispatch) => {
 
     apiClient.get(`movies/${movieId}`)
         .then(response => dispatch(actions.setMovieDetail(response.data)))
+        .catch(error => console.log(error))
+        .finally(() => {
+            dispatch(actions.setLoading(false));
+        })
+}
+
+export const getMovieShows = (movieId) => async (dispatch) => {
+    const { actions } = movieSlice;
+
+    dispatch(actions.setLoading(true));
+
+    apiClient.get(`shows/movie/${movieId}`)
+        .then(response => dispatch(actions.setMovieShows(response.data)))
         .catch(error => console.log(error))
         .finally(() => {
             dispatch(actions.setLoading(false));

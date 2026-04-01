@@ -78,3 +78,279 @@
         }
     }
 }
+
+// Movie Detail Page Styles
+.movie-detail-page {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.movie-hero {
+    position: relative;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    padding: 40px 0;
+
+    .movie-hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        width: 100%;
+
+        .movie-poster {
+            text-align: center;
+
+            @media (max-width: 768px) {
+                margin-bottom: 20px;
+            }
+        }
+
+        .movie-info {
+            color: white;
+
+            .ant-typography h1 {
+                margin-bottom: 16px !important;
+                font-size: 2.5rem !important;
+
+                @media (max-width: 768px) {
+                    font-size: 2rem !important;
+                }
+            }
+
+            .rating,
+            .duration,
+            .release-date {
+                display: flex;
+                align-items: center;
+                font-size: 16px;
+            }
+
+            .movie-meta {
+                .ant-tag {
+                    margin-right: 8px;
+                    margin-bottom: 4px;
+                }
+            }
+
+            .movie-actions {
+                margin-top: 24px;
+
+                .ant-btn {
+                    font-weight: 600;
+                    border-radius: 6px;
+                    height: 48px;
+                    padding: 0 24px;
+
+                    &:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(240, 8, 101, 0.3);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.movie-content {
+    padding: 40px 0;
+    background-color: white;
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .movie-synopsis,
+    .movie-cast,
+    .movie-reviews {
+        .ant-typography h3 {
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .ant-typography p {
+            color: #666;
+        }
+    }
+
+    .cast-list {
+        .cast-member {
+            text-align: center;
+            min-width: 80px;
+
+            .ant-avatar {
+                margin-bottom: 8px;
+            }
+        }
+    }
+
+    .reviews-section {
+        .overall-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+
+            .ant-rate {
+                margin-right: 8px;
+            }
+        }
+    }
+
+    .show-timings {
+        .ant-card-head-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .theater-group {
+            margin-bottom: 24px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .theater-name {
+                margin-bottom: 8px;
+            }
+
+            .show-times {
+                .ant-btn {
+                    margin: 4px 4px 4px 0;
+                    border-radius: 4px;
+                    font-weight: 500;
+
+                    &:hover {
+                        background-color: #f00865;
+                        border-color: #f00865;
+                        color: white;
+                    }
+                }
+            }
+        }
+    }
+
+    .movie-stats {
+        .ant-card-head-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .stats-list {
+            .stat-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #f0f0f0;
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                span:first-child {
+                    font-weight: 600;
+                    color: #333;
+                }
+
+                span:last-child {
+                    color: #666;
+                }
+            }
+        }
+    }
+}
+
+.movie-detail-loading,
+.movie-detail-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    padding: 40px;
+
+    .loading-spinner {
+        font-size: 18px;
+        color: #666;
+    }
+
+    h2 {
+        color: #333;
+        margin-bottom: 16px;
+    }
+
+    .ant-btn {
+        background-color: #f00865;
+        border-color: #f00865;
+
+        &:hover {
+            background-color: #d00755;
+            border-color: #d00755;
+        }
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .movie-hero {
+        min-height: 400px;
+        padding: 20px 0;
+
+        .movie-hero-content {
+            padding: 0 15px;
+
+            .movie-info {
+                .ant-typography h1 {
+                    font-size: 1.8rem !important;
+                }
+
+                .movie-actions {
+                    .ant-btn {
+                        width: 100%;
+                        margin-bottom: 8px;
+                    }
+                }
+            }
+        }
+    }
+
+    .movie-content {
+        padding: 20px 0;
+
+        .container {
+            padding: 0 15px;
+        }
+
+        .show-timings,
+        .movie-stats {
+            margin-bottom: 16px;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .movie-hero {
+        .movie-hero-content {
+            .movie-info {
+                .ant-typography h1 {
+                    font-size: 1.5rem !important;
+                }
+            }
+        }
+    }
+
+    .movie-content {
+        .cast-list {
+            .cast-member {
+                min-width: 60px;
+
+                .ant-avatar {
+                    width: 48px !important;
+                    height: 48px !important;
+                    line-height: 48px !important;
+                }
+            }
+        }
+    }
+}
