@@ -44,6 +44,16 @@ const findShows = async (req, res) => {
     }
 }
 
+const findShowsByMovie = async (req, res) => {
+    try {
+        const { movieId } = req.params;
+        const shows = await showService.findShowsByMovie(movieId);
+        res.status(200).json(shows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 const getShowSeats = async (req, res) => {
     try {
         const { showId } = req.params;
@@ -58,6 +68,7 @@ module.exports = {
     activateShow,
     createShow,
     findShows,
+    findShowsByMovie,
     updatePricing,
     getShowSeats,
 };

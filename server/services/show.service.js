@@ -102,6 +102,17 @@ const findShows = async (filter = {}, orderBy = 'showTime', direction = 1, limit
     return shows;
 }
 
+const findShowsByMovie = async (movieId, limit = 20) => {
+    const shows = await showModel.find({ movie: movieId, status: 'active' })
+        .select('theater screen showTime pricing status')
+        .populate({ path: 'theater', select: 'name location' })
+        .populate({ path: 'screen', select: 'name screenType' })
+        .sort({ showTime: 1 })
+        .limit(limit);
+
+    return shows;
+}
+
 
 const getShowSeats = async (showId) => {
     // Fetch the show document by showId and populate the showSeat details.
@@ -116,6 +127,7 @@ module.exports = {
     activateShow,
     createShow,
     findShows,
+    findShowsByMovie,
     getShowSeats,
     updatePricing,
 };
