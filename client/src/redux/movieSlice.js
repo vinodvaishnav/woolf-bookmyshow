@@ -111,17 +111,6 @@ export const getMovieDetail = (movieId) => async (dispatch) => {
         })
 }
 
-export const getMovieShows = (movieId) => async (dispatch) => {
-    const { actions } = movieSlice;
 
-    dispatch(actions.setLoading(true));
-
-    apiClient.get(`shows/movie/${movieId}`)
-        .then(response => dispatch(actions.setMovieShows(response.data)))
-        .catch(error => console.log(error))
-        .finally(() => {
-            dispatch(actions.setLoading(false));
-        })
-}
 
 export default movieSlice;
