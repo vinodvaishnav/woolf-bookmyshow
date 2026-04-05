@@ -1,5 +1,13 @@
 const express = require('express');
-const { createShow, updatePricing, activateShow, findShows, getShowSeats, findShowsByMovie } = require('../controllers/showController');
+const {
+    createShow,
+    updatePricing,
+    activateShow,
+    findShows,
+    getShowSeats,
+    findShowsByMovie,
+    getShowDetail
+} = require('../controllers/showController');
 const { authenticateUser } = require('../middlewares/authUser');
 
 const showRoute = express.Router();
@@ -17,6 +25,7 @@ showRoute.post('/', createShow);
 showRoute.put('/:showId/pricing', updatePricing);
 showRoute.put('/:showId/activate', activateShow);
 showRoute.get('/:showId/seats', getShowSeats);
+showRoute.get('/:showId', getShowDetail);
 showRoute.get('/movie/:movieId', findShowsByMovie);
 showRoute.get('/', findShows);
 

@@ -51,3 +51,20 @@ export const groupShowsByDateAndTheater = (shows) => {
         theaters: Object.values(grouped[date])
     })).sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date
 };
+
+export const groupSeatsByRow = (seats) => {
+    const grouped = {};
+    seats.forEach(seat => {
+        const row = seat.row;
+        if (!grouped[row]) {
+            grouped[row] = [];
+        }
+        grouped[row].push(seat);
+    });
+    // Sort rows alphabetically and seats within each row by number
+    const sortedRows = Object.keys(grouped).sort();
+    return sortedRows.map(row => ({
+        row,
+        seats: grouped[row].sort((a, b) => a.number - b.number)
+    }));
+};

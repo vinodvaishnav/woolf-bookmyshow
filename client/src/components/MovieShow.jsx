@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getMovieShows } from "../redux/showSlice";
 import { Typography, Card, Button, Row, Space, Divider, Tabs, Col } from 'antd';
@@ -8,6 +9,7 @@ import Loading from "./Loading";
 const { Title, Text } = Typography;
 
 const MovieShow = ({ movieId }) => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { movieShows, loading } = useSelector(state => state.showState);
 
@@ -18,7 +20,7 @@ const MovieShow = ({ movieId }) => {
     }, [movieId, dispatch]);
 
     const handleBookShow = (showId) => {
-        // navigate(`/show/${showId}`);
+        navigate(`/show/${showId}`);
     };
 
     const dateGroups = groupShowsByDateAndTheater(movieShows);
@@ -32,8 +34,6 @@ const MovieShow = ({ movieId }) => {
                         <Col span={24}>
                             <Title level={2}>Book Your Tickets</Title>
                             <div style={{ marginBottom: '24px', display: "block" }}>
-
-
                                 {dateGroups.length > 0 ? (
                                     <Tabs defaultActiveKey={dateGroups[0]?.date} type="card">
                                         {dateGroups.map(dateGroup => (

@@ -5,7 +5,8 @@ const showSlice = createSlice({
     name: 'showSlice',
     initialState: {
         movieShows: [],
-        ShowDetail: null,
+        showDetail: null,
+        showSeats: [],
         loading: false
     },
     reducers: {
@@ -20,7 +21,14 @@ const showSlice = createSlice({
             const { payload } = action;
             return {
                 ...state,
-                ShowDetail: payload
+                showDetail: payload
+            }
+        },
+        setShowSeats: (state, action) => {
+            const { payload } = action;
+            return {
+                ...state,
+                showSeats: payload
             }
         },
         setLoading: (state, action) => {
@@ -58,5 +66,20 @@ export const getShowDetail = (showId) => async (dispatch) => {
             dispatch(actions.setLoading(false));
         })
 }
+
+export const getShowSeats = (showId) => async (dispatch) => {
+    const { actions } = showSlice;
+
+    dispatch(actions.setLoading(true));
+
+    apiClient.get(`shows/${showId}/seats`)
+        .then(response => dispatch(actions.setShowSeats(response.data)))
+        .catch(error => console.log(error))
+        .finally(() => {
+            dispatch(actions.setLoading(false));
+        })
+}
+
+export const { setMovieShows, setShowDetail, setShowSeats, setLoading } = showSlice.actions;
 
 export default showSlice;

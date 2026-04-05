@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Movie from './pages/Movie';
 import UserLockout from './components/UserLockout';
+import Show from './pages/Show';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route index element={<Home />} />
 
         <Route path='/movie/:id' element={<Movie />} />
+        <Route path='/show/:showId' element={<Show />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/profile' element={<Register />} />
