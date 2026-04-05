@@ -123,6 +123,17 @@ const getShowSeats = async (showId) => {
     return showSeats;
 }
 
+const getShowDetail = async (showId) => {
+    // Fetch the show document by showId and populate the movie, theater, screen, and pricing details.
+    const showDetail = await showModel.findById(showId)
+        .select('theater movie screen showTime pricing status')
+        .populate({ path: 'movie', select: 'name thumbnail' })
+        .populate({ path: 'theater', select: 'name location' })
+        .populate({ path: 'screen', select: 'name screenType' });
+
+    return showDetail;
+}
+
 module.exports = {
     activateShow,
     createShow,
@@ -130,4 +141,5 @@ module.exports = {
     findShowsByMovie,
     getShowSeats,
     updatePricing,
+    getShowDetail,
 };

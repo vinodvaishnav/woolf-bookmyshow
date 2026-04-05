@@ -8,7 +8,7 @@ const showSchema = new mongoose.Schema({
     },
     seat: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'seats',
+        ref: 'screen_seats',
         required: true
     },
     status: {
