@@ -28,3 +28,26 @@ export const groupShowsByTheater = (shows) => {
     });
     return Object.values(grouped);
 };
+
+export const groupShowsByDateAndTheater = (shows) => {
+    const grouped = {};
+    shows.forEach(show => {
+        const date = new Date(show.showTime).toDateString(); // Group by date string
+        const theaterId = show.theater._id;
+        if (!grouped[date]) {
+            grouped[date] = {};
+        }
+        if (!grouped[date][theaterId]) {
+            grouped[date][theaterId] = {
+                theater: show.theater,
+                shows: []
+            };
+        }
+        grouped[date][theaterId].shows.push(show);
+    });
+    // Convert to array of dates with theaters
+    return Object.keys(grouped).map(date => ({
+        date,
+        theaters: Object.values(grouped[date])
+    })).sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date
+};
