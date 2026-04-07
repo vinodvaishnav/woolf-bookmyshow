@@ -63,4 +63,10 @@ export const getLoggedin = params => async dispatch => {
 
 }
 
+export const logout = () => async dispatch => {
+    // const { actions } = userSlice;
+    // dispatch(actions.logout());
+    // remove token from localstorage
+}
+
 export default userSlice;
