@@ -26,7 +26,7 @@ const Show = () => {
     const navigate = useNavigate();
     const { showId } = useParams();
     const { showDetail, showSeats, loading } = useSelector(state => state.showState);
-    const { user } = useSelector(state => state.userState);
+    const { isLoggedIn, data: user } = useSelector(state => state.userState);
 
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [seatsByRow, setSeatsByRow] = useState([]);
@@ -93,12 +93,13 @@ const Show = () => {
             return;
         }
 
-        if (!user || !user._id) {
+        if (!isLoggedIn || !user._id) {
             Modal.warning({
                 title: 'Login Required',
                 content: 'Please login to complete your booking.',
                 onOk: () => navigate('/login'),
             });
+
             return;
         }
 
