@@ -1,6 +1,7 @@
 const showModel = require('../models/showModel');
 const screenModel = require('../models/screenModel');
 const screenSeatModel = require('../models/screenSeatModel');
+const seatTypeModel = require('../models/seatTypeModel');
 const showSeatStatusModel = require('../models/showSeatStatusModel');
 const mongoose = require('mongoose');
 
@@ -129,7 +130,8 @@ const getShowDetail = async (showId) => {
         .select('theater movie screen showTime pricing status')
         .populate({ path: 'movie', select: 'name thumbnail' })
         .populate({ path: 'theater', select: 'name location' })
-        .populate({ path: 'screen', select: 'name screenType' });
+        .populate({ path: 'screen', select: 'name screenType' })
+        .populate({ path: 'pricing.seat_type', select: 'name' });
 
     return showDetail;
 }
