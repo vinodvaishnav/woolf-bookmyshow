@@ -54,12 +54,12 @@ export const groupShowsByDateAndTheater = (shows) => {
 
 export const groupSeatsByRow = (seats) => {
     const grouped = {};
-    seats.forEach(seat => {
-        const row = seat.row;
+    seats.forEach(showSeat => {
+        const row = showSeat.seat.row;
         if (!grouped[row]) {
             grouped[row] = [];
         }
-        grouped[row].push(seat);
+        grouped[row].push(showSeat);
     });
     // Sort rows alphabetically and seats within each row by number
     const sortedRows = Object.keys(grouped).sort();

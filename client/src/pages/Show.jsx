@@ -58,20 +58,13 @@ const Show = () => {
 
     const handleSeatClick = (seat) => {
         // Find the corresponding show seat status for this seat
-        const seatStatus = showDetail.seatStatuses?.find(
-            ss => ss.seat._id === seat._id
-        );
+        const seatId = seat._id;
+        const isSeatSelected = selectedSeats.some(s => s._id === seatId);
 
-        if (!seatStatus || seatStatus.status === 'available') {
-            // Toggle seat selection if available
-            const seatId = seat._id;
-            const isSeatSelected = selectedSeats.some(s => s._id === seatId);
-
-            if (isSeatSelected) {
-                setSelectedSeats(selectedSeats.filter(s => s._id !== seatId));
-            } else {
-                setSelectedSeats([...selectedSeats, seat]);
-            }
+        if (isSeatSelected) {
+            setSelectedSeats(selectedSeats.filter(s => s._id !== seatId));
+        } else {
+            setSelectedSeats([...selectedSeats, seat]);
         }
     };
 
@@ -83,13 +76,12 @@ const Show = () => {
     };
 
     const calculateTotalPrice = () => {
-        // return selectedSeats.reduce((total, seat) => {
-        //     const seatTypePrice = showDetail.pricing?.find(
-        //         p => p.seat_type._id === seat.type._id
-        //     );
-        //     return total + (seatTypePrice?.price || 0);
-        // }, 0);
-        return 0;
+        return selectedSeats.reduce((total, showSeat) => {
+            const seatTypePrice = showDetail.pricing?.find(
+                p => p.seat_type._id === showSeat.seat.type
+            );
+            return total + (seatTypePrice?.price || 0);
+        }, 0);
     };
 
     const handleProceedToPayment = () => {
@@ -152,7 +144,7 @@ const Show = () => {
                                     <Col xs={12} sm={8}>
                                         <Statistic
                                             title="Movie"
-                                            value={showDetail.movie?.title || 'N/A'}
+                                            value={showDetail.movie?.name || 'N/A'}
                                             valueStyle={{ fontSize: '14px' }}
                                         />
                                     </Col>
@@ -176,7 +168,7 @@ const Show = () => {
                                     <Col xs={24} sm={8}>
                                         <Statistic
                                             title="Screen"
-                                            value={showDetail.screen?.screenType || 'N/A'}
+                                            value={`${showDetail.screen?.name} - ${showDetail.screen?.screenType || 'N/A'}`}
                                             valueStyle={{ fontSize: '14px' }}
                                         />
                                     </Col>
@@ -208,19 +200,20 @@ const Show = () => {
                                                 </Col>
                                                 <Col xs={20}>
                                                     <Space wrap>
-                                                        {rowData.seats.map(seat => {
-                                                            const status = getSeatStatus(seat);
-                                                            const isSelected = selectedSeats.some(s => s._id === seat._id);
-                                                            // const seatTypePrice = showDetail.pricing?.find(
-                                                            //     p => p.seat_type._id === seat.type._id
-                                                            // );
-                                                            const seatTypePrice = 0;
+                                                        {rowData.seats.map(showSeat => {
+                                                            const { status, seat } = showSeat;
+
+                                                            const isSelected = selectedSeats.some(s => s._id === showSeat._id);
+
+                                                            const seatTypePrice = showDetail.pricing?.find(
+                                                                p => p.seat_type._id === seat.type
+                                                            );
 
                                                             return (
-                                                                <Tooltip key={seat._id} title={`${rowData.row}${seat.number} - ${seatTypePrice?.seat_type?.name} (₹${seatTypePrice?.price})`}>
+                                                                <Tooltip key={showSeat._id} title={`${rowData.row}${seat.number} - ${seatTypePrice?.seat_type?.name} (₹${seatTypePrice?.price})`}>
                                                                     <Button
                                                                         className={getSeatButtonClass(seat)}
-                                                                        onClick={() => handleSeatClick(seat)}
+                                                                        onClick={() => handleSeatClick(showSeat)}
                                                                         disabled={status === 'booked' || status === 'blocked' || status === 'maintenance'}
                                                                         style={{
                                                                             width: '40px',
@@ -358,9 +351,9 @@ const Show = () => {
                                         </Text>
                                         <div style={{ background: '#fafafa', padding: '12px', borderRadius: '4px' }}>
                                             <Space wrap>
-                                                {selectedSeats.map(seat => (
-                                                    <Tag key={seat._id} closable onClose={() => handleSeatClick(seat)}>
-                                                        {seat.row}{seat.number}
+                                                {selectedSeats.map(showSeat => (
+                                                    <Tag key={showSeat._id} closable onClose={() => handleSeatClick(showSeat)}>
+                                                        {showSeat.seat.row}{showSeat.seat.number}
                                                     </Tag>
                                                 ))}
                                             </Space>
@@ -373,19 +366,19 @@ const Show = () => {
                                         <Text strong style={{ display: 'block', marginBottom: '8px' }}>
                                             Price Breakdown:
                                         </Text>
-                                        {selectedSeats.map(seat => {
-                                            const seatTypePrice = 0;
-                                            // const seatTypePrice = showDetail.pricing?.find(
-                                            //     p => p.seat_type._id === seat.type._id
-                                            // );
+                                        {selectedSeats.map(showSeat => {
+                                            const seatTypePrice = showDetail.pricing?.find(
+                                                p => p.seat_type._id === showSeat.seat.type
+                                            );
+
                                             return (
-                                                <div key={seat._id} style={{
+                                                <div key={showSeat._id} style={{
                                                     display: 'flex',
                                                     justifyContent: 'space-between',
                                                     padding: '4px 0',
                                                     fontSize: '12px'
                                                 }}>
-                                                    <span>{seat.row}{seat.number} ({seatTypePrice?.seat_type?.name})</span>
+                                                    <span>{showSeat.seat.row}{showSeat.seat.number} ({seatTypePrice?.seat_type?.name})</span>
                                                     <span>₹{seatTypePrice?.price || 0}</span>
                                                 </div>
                                             );
