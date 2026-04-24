@@ -111,6 +111,49 @@ export const getMovieDetail = (movieId) => async (dispatch) => {
         })
 }
 
+export const deleteMovie = (movieId) => async (dispatch) => {
+    const { actions } = movieSlice;
 
+    dispatch(actions.setLoading(true));
+
+    apiClient.delete(`movies/${movieId}`)
+        .then(() => {
+            dispatch(getMovies());
+        })
+        .catch(error => console.log(error))
+        .finally(() => {
+            dispatch(actions.setLoading(false));
+        })
+}
+
+export const updateMovie = (movieId, movieData) => async (dispatch) => {
+    const { actions } = movieSlice;
+
+    dispatch(actions.setLoading(true));
+
+    apiClient.put(`movies/${movieId}`, movieData)
+        .then(() => {
+            dispatch(getMovies());
+        })
+        .catch(error => console.log(error))
+        .finally(() => {
+            dispatch(actions.setLoading(false));
+        })
+}
+
+export const addMovie = (movieData) => async (dispatch) => {
+    const { actions } = movieSlice;
+
+    dispatch(actions.setLoading(true));
+
+    apiClient.post('movies', movieData)
+        .then(() => {
+            dispatch(getMovies());
+        })
+        .catch(error => console.log(error))
+        .finally(() => {
+            dispatch(actions.setLoading(false));
+        })
+}
 
 export default movieSlice;

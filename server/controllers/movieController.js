@@ -49,9 +49,51 @@ const addMovie = async (req, res) => {
     });
 }
 
+const updateMovie = async (req, res) => {
+    try {
+        const movieId = req.params.movieId;
+        const inputData = req.body;
+
+        // @TODO: Add authorization check - only admin can update a movie
+
+        const updatedMovie = await movieService.updateMovie(movieId, inputData);
+        if (!updatedMovie) {
+            return res.status(404).send({ message: 'Movie not found' });
+        }
+
+        res.send({
+            message: `Movie: ${inputData.title} - Updated successfully`,
+            data: updatedMovie
+        });
+    } catch (error) {
+        console.error('Error updating movie:', error);
+        res.status(500).send({ message: 'Error updating movie' });
+    }
+}
+
+const deleteMovie = async (req, res) => {
+    try {
+        const movieId = req.params.movieId;
+
+        // @TODO: Add authorization check - only admin can delete a movie
+
+        const result = await movieService.deleteMovie(movieId);
+        if (!result) {
+            return res.status(404).send({ message: 'Movie not found' });
+        }
+
+        res.send({ message: `Movie deleted successfully` });
+    } catch (error) {
+        console.error('Error deleting movie:', error);
+        res.status(500).send({ message: 'Error deleting movie' });
+    }
+}
+
 module.exports = {
     getMovies,
     getMovieDetail,
     addMovie,
+    updateMovie,
+    deleteMovie,
     getCarouselData
 }

@@ -49,7 +49,3 @@ module.exports = {
     getBookingDetails,
     confirmBooking
 }
-
-module.exports = {
-    createBooking
-}

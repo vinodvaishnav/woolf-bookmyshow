@@ -6,7 +6,7 @@ const getMovies = async (where = null, limit = 20, orderBy = "_id", direction = 
     // Manage Movie Listings.
     const movies = await MovieModel
         .find(where)
-        .select('id name releaseDate thumbnail poster')
+        .select('id name releaseDate thumbnail poster status')
         .limit(limit)
         .sort({
             [orderBy]: direction
@@ -83,11 +83,18 @@ const updateMovie = async (movieId, updateData) => {
     return updatedMovie;
 }
 
+const deleteMovie = async (movieId) => {
+    // Delete a movie. Only admin can delete a movie.
+    const deletedMovie = await MovieModel.findByIdAndDelete(movieId);
+    return deletedMovie;
+}
+
 module.exports = {
     getMovies,
     getMovieDetail,
     getLatestMovies,
     getMovieCarouselData,
     updateMovie,
+    deleteMovie,
     addMovie
 }
