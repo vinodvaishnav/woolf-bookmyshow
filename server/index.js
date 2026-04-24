@@ -27,6 +27,7 @@ const movieRoutes = require('./routes/movieRoute');
 const regionRoutes = require('./routes/regionRoute');
 const showRoutes = require('./routes/showRoute');
 const bookingRoutes = require('./routes/bookingRoute');
+const theaterRoutes = require('./routes/theaterRoute');
 const cors = require('cors');
 
 try {
@@ -54,6 +55,7 @@ try {
     app.use('/api/shows', showRoutes);
     app.use('/api/regions', regionRoutes);
     app.use('/api/movies', movieRoutes);
+    app.use('/api/theaters', theaterRoutes);
     app.use('/api/user', userRoutes);
     app.use('/api/bookings', bookingRoutes);
 

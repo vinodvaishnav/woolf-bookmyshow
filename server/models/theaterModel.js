@@ -23,6 +23,18 @@ const TheaterSchema = new mongoose.Schema({
             required: false,
         }
     },
+    contactPerson: {
+        type: String,
+        required: false,
+    },
+    contactEmail: {
+        type: String,
+        required: false,
+    },
+    contactPhone: {
+        type: String,
+        required: false,
+    },
     status: {
         type: String,
         enum: ['active', 'inactive'],
