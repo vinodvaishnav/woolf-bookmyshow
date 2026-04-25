@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import apiClient from "../util/api_client";
+import React, { useEffect } from "react";
 import MovieCard from "../components/MovieCard";
 import { Flex, Carousel } from 'antd';
 
@@ -7,30 +6,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { getMovies } from "../redux/movieSlice";
 
 const Home = () => {
-    // const [movies, setMovies] = useState([]);
-    // const [loading, setLoading] = useState(false);
-    const [error, setError] = useState();
-
     const { loading, movies } = useSelector(store => store.movieState);
     const dispatch = useDispatch();
-    console.log(movies);
 
     useEffect(() => {
         dispatch(getMovies());
-
-        // setLoading(true);
-        // apiClient.get('movies')
-        //     .then(response => {
-        //         setMovies(response?.data);
-        //         console.log(response);
-        //     })
-        //     .catch(err => {
-        //         console.log(err?.response?.data);
-        //         setError(err?.response?.data?.error);
-        //     })
-        //     .finally(() => {
-        //         setLoading(false)
-        //     });
     }, []);
 
     const contentStyle = {
@@ -58,7 +38,7 @@ const Home = () => {
             <Flex wrap gap='large' justify="center">
                 {
                     loading ? <div className="loading">Loading...</div> :
-                        error ? <div className="error">{error}</div> :
+                        !movies.length ? <div className="error">No Movie Show Available now.</div> :
                             movies.map((movie, id) => <MovieCard movie={movie} key={id} />)
                 }
             </Flex>

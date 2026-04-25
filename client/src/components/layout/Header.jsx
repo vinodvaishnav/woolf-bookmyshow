@@ -10,10 +10,10 @@ const { Header: AntHeader } = Layout;
 const Header = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { isLoggedIn, data: userData } = useSelector(state => state.userState);
+    const { isLoggedIn, userData } = useSelector(state => state.userState);
 
     const handleLogout = () => {
-        // dispatch(logout());
+        dispatch(logout());
         navigate('/');
     };
 
@@ -77,7 +77,7 @@ const Header = () => {
 
             {/* Login Section */}
             <div>
-                {isLoggedIn ? (
+                {userData ? (
                     <Dropdown
                         menu={{ items: userMenuItems }}
                         placement="bottomRight"

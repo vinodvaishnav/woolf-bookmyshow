@@ -30,10 +30,10 @@ const loginUser = async (req, res, next) => {
             throw new Error('Incorrect email or password!');
         }
 
-        const authToken = generateToken({ user: user.id });
+        const authToken = generateToken({ user: user._id });
 
         res.send({
-            accessToken: authToken
+            authToken: authToken
         });
     } catch (err) {
         next(err);
@@ -70,8 +70,29 @@ const registerUser = async (req, res, next) => {
     }
 }
 
+const getUserProfile = async (req, res) => {
+    try {
+        const userId = req.body.loggedInUser;
+        console.log("===== userId", userId);
+        const user = await UserModel.findById(userId).select("-password").populate('role', 'name');
+        res.send({
+            success: true,
+            message: "You are Authenticated",
+            data: user,
+        });
+    } catch (err) {
+        res.send({
+            success: false,
+            message: err.message,
+        });
+    }
+
+    return;
+}
+
 const restPassword = (req, res) => {
     res.send({
+        success: true,
         message: 'your password has been reset and shared on mail.'
     });
 }
@@ -80,4 +101,5 @@ module.exports = {
     loginUser,
     registerUser,
     restPassword,
+    getUserProfile
 }

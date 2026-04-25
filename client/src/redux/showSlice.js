@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import apiClient from "../util/api_client";
+import getApiClient from "../util/api_client";
 
 const showSlice = createSlice({
     name: 'showSlice',
@@ -46,7 +46,7 @@ export const getMovieShows = (movieId) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.get(`shows/movie/${movieId}`)
+    getApiClient().get(`shows/movie/${movieId}`)
         .then(response => dispatch(actions.setMovieShows(response.data)))
         .catch(error => console.log(error))
         .finally(() => {
@@ -59,7 +59,7 @@ export const getShowDetail = (showId) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.get(`shows/${showId}`)
+    getApiClient().get(`shows/${showId}`)
         .then(response => dispatch(actions.setShowDetail(response.data)))
         .catch(error => console.log(error))
         .finally(() => {
@@ -72,7 +72,7 @@ export const getShowSeats = (showId) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.get(`shows/${showId}/seats`)
+    getApiClient().get(`shows/${showId}/seats`)
         .then(response => dispatch(actions.setShowSeats(response.data)))
         .catch(error => console.log(error))
         .finally(() => {

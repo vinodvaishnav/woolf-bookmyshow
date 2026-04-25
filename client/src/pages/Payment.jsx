@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Card, Button, Row, Col, Typography, List, Divider, message, Spin } from 'antd';
 import { CreditCardOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import apiClient from '../util/api_client';
+import getApiClient from '../util/api_client';
 
 const { Title, Text } = Typography;
 
@@ -36,7 +36,7 @@ const Payment = () => {
             };
 
             // Make the API call to create booking
-            const response = await apiClient.post('/bookings', bookingData);
+            const response = await getApiClient().post('/bookings', bookingData);
 
             if (response.status === 201) {
                 message.success('Booking created successfully! Proceeding to payment...');

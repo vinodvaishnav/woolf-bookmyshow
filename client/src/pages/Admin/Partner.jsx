@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Table, Button, Space, Modal, Form, Input, Select, InputNumber, message, Popconfirm, Switch, Tag } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, UserOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { getTheaters, getRegions, addTheater, updateTheater, deleteTheater, toggleTheaterStatus } from '../../redux/theaterSlice';
-import apiClient from '../../util/api_client';
+import getApiClient from '../../util/api_client';
 
 const { Option } = Select;
 
@@ -46,7 +46,7 @@ const PartnerManager = () => {
 
     const handleDeleteTheater = async (theaterId) => {
         try {
-            await apiClient.delete(`theaters/${theaterId}`);
+            await getApiClient().delete(`theaters/${theaterId}`);
             message.success('Theater deleted successfully');
             dispatch(getTheaters());
         } catch (error) {
@@ -57,7 +57,7 @@ const PartnerManager = () => {
 
     const handleToggleStatus = async (theaterId, checked) => {
         try {
-            await apiClient.patch(`theaters/${theaterId}/toggle-status`);
+            await getApiClient().patch(`theaters/${theaterId}/toggle-status`);
             message.success(`Theater ${checked ? 'activated' : 'deactivated'} successfully`);
             dispatch(getTheaters());
         } catch (error) {
@@ -93,11 +93,11 @@ const PartnerManager = () => {
 
             if (isEditMode && editingTheater) {
                 // Update theater
-                await apiClient.put(`theaters/${editingTheater._id}`, theaterData);
+                await getApiClient().put(`theaters/${editingTheater._id}`, theaterData);
                 message.success('Theater updated successfully');
             } else {
                 // Add new theater
-                await apiClient.post('theaters', theaterData);
+                await getApiClient().post('theaters', theaterData);
                 message.success('Theater added successfully');
             }
 

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import apiClient from '../util/api_client';
+import getApiClient from '../util/api_client';
 
 const movieSlice = createSlice({
     name: 'movieSlice',
@@ -90,7 +90,7 @@ export const getMovies = (params) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.get('movies')
+    getApiClient().get('movies')
         .then(response => dispatch(actions.setMovies(response.data)))
         .catch(error => console.log(error))
         .finally(() => {
@@ -103,7 +103,7 @@ export const getMovieDetail = (movieId) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.get(`movies/${movieId}`)
+    getApiClient().get(`movies/${movieId}`)
         .then(response => dispatch(actions.setMovieDetail(response.data)))
         .catch(error => console.log(error))
         .finally(() => {
@@ -116,7 +116,7 @@ export const deleteMovie = (movieId) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.delete(`movies/${movieId}`)
+    getApiClient().delete(`movies/${movieId}`)
         .then(() => {
             dispatch(getMovies());
         })
@@ -131,7 +131,7 @@ export const updateMovie = (movieId, movieData) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.put(`movies/${movieId}`, movieData)
+    getApiClient().put(`movies/${movieId}`, movieData)
         .then(() => {
             dispatch(getMovies());
         })
@@ -146,7 +146,7 @@ export const addMovie = (movieData) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.post('movies', movieData)
+    getApiClient().post('movies', movieData)
         .then(() => {
             dispatch(getMovies());
         })

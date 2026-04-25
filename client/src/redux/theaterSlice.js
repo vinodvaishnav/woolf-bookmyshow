@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import apiClient from '../util/api_client';
+import getApiClient from '../util/api_client';
 
 const theaterSlice = createSlice({
     name: 'theaterSlice',
@@ -46,7 +46,7 @@ export const getTheaters = (params) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.get('theaters')
+    getApiClient().get('theaters')
         .then(response => dispatch(actions.setTheaters(response.data)))
         .catch(error => console.log(error))
         .finally(() => {
@@ -59,7 +59,7 @@ export const getTheaterDetail = (theaterId) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.get(`theaters/${theaterId}`)
+    getApiClient().get(`theaters/${theaterId}`)
         .then(response => dispatch(actions.setTheaterDetail(response.data)))
         .catch(error => console.log(error))
         .finally(() => {
@@ -70,7 +70,7 @@ export const getTheaterDetail = (theaterId) => async (dispatch) => {
 export const getRegions = () => async (dispatch) => {
     const { actions } = theaterSlice;
 
-    apiClient.get('regions')
+    getApiClient().get('regions')
         .then(response => dispatch(actions.setRegions(response.data)))
         .catch(error => console.log(error))
 }
@@ -80,7 +80,7 @@ export const deleteTheater = (theaterId) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.delete(`theaters/${theaterId}`)
+    getApiClient().delete(`theaters/${theaterId}`)
         .then(() => {
             dispatch(getTheaters());
         })
@@ -95,7 +95,7 @@ export const updateTheater = (theaterId, theaterData) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.put(`theaters/${theaterId}`, theaterData)
+    getApiClient().put(`theaters/${theaterId}`, theaterData)
         .then(() => {
             dispatch(getTheaters());
         })
@@ -110,7 +110,7 @@ export const addTheater = (theaterData) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.post('theaters', theaterData)
+    getApiClient().post('theaters', theaterData)
         .then(() => {
             dispatch(getTheaters());
         })
@@ -125,7 +125,7 @@ export const toggleTheaterStatus = (theaterId) => async (dispatch) => {
 
     dispatch(actions.setLoading(true));
 
-    apiClient.patch(`theaters/${theaterId}/toggle-status`)
+    getApiClient().patch(`theaters/${theaterId}/toggle-status`)
         .then(() => {
             dispatch(getTheaters());
         })

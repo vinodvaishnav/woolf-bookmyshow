@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Table, Button, Space, Modal, Form, Input, InputNumber, message, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { getMovies } from '../redux/movieSlice';
-import apiClient from '../util/api_client';
+import getApiClient from '../util/api_client';
 
 const MovieListing = () => {
     const dispatch = useDispatch();
@@ -42,7 +42,7 @@ const MovieListing = () => {
 
     const handleDeleteMovie = async (movieId) => {
         try {
-            await apiClient.delete(`movies/${movieId}`);
+            await getApiClient().delete(`movies/${movieId}`);
             message.success('Movie deleted successfully');
             dispatch(getMovies());
         } catch (error) {
@@ -64,11 +64,11 @@ const MovieListing = () => {
 
             if (isEditMode && editingMovie) {
                 // Update movie
-                await apiClient.put(`movies/${editingMovie._id}`, values);
+                await getApiClient().put(`movies/${editingMovie._id}`, values);
                 message.success('Movie updated successfully');
             } else {
                 // Add new movie
-                await apiClient.post('movies', values);
+                await getApiClient().post('movies', values);
                 message.success('Movie added successfully');
             }
 

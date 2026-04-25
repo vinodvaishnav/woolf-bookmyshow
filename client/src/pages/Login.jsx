@@ -1,26 +1,33 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Input, Button, Form } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
-import apiClient from '../util/api_client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserProfile, getLoggedin } from '../redux/userSlice';
 
 const Login = () => {
     const navigate = useNavigate();
     const [error, setError] = useState();
+    const { loading, isLoggedIn, userData } = useSelector(state => state.userState);
+    const dispatch = useDispatch();
 
     const loginHandler = (data) => {
-        apiClient.post('/user/login', data)
-            .then(response => {
-                const authToken = response?.data?.accessToken;
-                console.log(response?.data?.accessToken);
-                localStorage.setItem('token', authToken);
-                navigate('/');
-            })
-            .catch(err => {
-                console.log(err.response);
-                setError(err.response?.data?.error)
-            });
+        dispatch(getLoggedin(data));
     }
+
+    useEffect(() => {
+        if (userData) {
+            if (userData.role.name.toLowerCase() === 'admin') {
+                navigate('/admin');
+            } else if (userData.role.name.toLowerCase() === 'partner') {
+                navigate('/partner');
+            } else {
+                navigate('/');
+            }
+        } else {
+            dispatch(getUserProfile());
+        }
+    }, [isLoggedIn, userData]);
 
     return <div className="login-container">
         <div className="login-inner">

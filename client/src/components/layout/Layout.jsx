@@ -1,11 +1,23 @@
 import { Outlet } from "react-router-dom"
 import { Layout as AntLayout, theme } from 'antd';
+import { useSelector, useDispatch } from "react-redux";
+import { getUserProfile } from "../../redux/userSlice";
+
 import Header from './Header';
+import { useEffect } from "react";
 
 const { Content, Footer } = AntLayout;
 
 const Layout = () => {
+    const dispatch = useDispatch();
+    const { isLoggedIn, data: userData } = useSelector(state => state.userState);
+
+    useEffect(() => {
+        dispatch(getUserProfile());
+    }, [userData]);
+
     const { token } = theme.useToken();
+
     return <AntLayout className="site-layout">
         <Header />
         <Content style={{

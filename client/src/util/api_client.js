@@ -3,12 +3,24 @@ import axios from 'axios';
 // @TODO: Move all the config parameters in 1 file it could be a .env
 const API_BASE_URL = 'http://localhost:5500/api';
 
-const apiClient = axios.create({
-    baseURL: API_BASE_URL,
-    timeout: 3000,
-    headers: {}
-    //@TODO: see possiblity if auth token can be sent in header here
-});
+// const token = localStorage.getItem('token');
+// console.log(token);
 
-export default apiClient;
+// localStorage.getItem('token') && (axios.defaults.headers.common['authorization'] = `Bearer ${localStorage.getItem('token')}`);
+// axios.defaults.baseURL = API_BASE_URL;
+// axios.defaults.timeout = 3000;
 
+// const apiClient = axios.create();
+
+// export default apiClient;
+
+const getApiClient = () => {
+    localStorage.getItem('token') && (axios.defaults.headers.common['authorization'] = `Bearer ${localStorage.getItem('token')}`);
+    axios.defaults.baseURL = API_BASE_URL;
+    axios.defaults.timeout = 3000;
+
+    const apiClient = axios.create();
+    return apiClient;
+}
+
+export default getApiClient;

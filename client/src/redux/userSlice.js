@@ -1,18 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
-import apiClient from '../util/api_client';
+import getApiClient from '../util/api_client';
 
 const userSlice = createSlice({
     name: 'userSlice',
     initialState: {
         loading: false,
         isLoggedIn: false,
-        data: null, // User data
+        userData: null, // User data
     },
     reducers: {
-        getUserData: (state, action) => {
+        setUserData: (state, action) => {
             const { payload } = action;
             return {
-                ...state
+                ...state,
+                userData: payload
             }
         },
 
@@ -29,7 +30,7 @@ const userSlice = createSlice({
             return {
                 ...state,
                 isLoggedIn: false,
-                data: null
+                userData: null
             }
         },
 
@@ -43,17 +44,35 @@ const userSlice = createSlice({
     }
 });
 
+export const getUserProfile = () => async dispatch => {
+    const { actions } = userSlice;
+    dispatch(actions.setLoading(true));
+    getApiClient().get('user/profile')
+        .then(response => {
+            dispatch(actions.setUserData(response.data.data));
+        })
+        .catch(err => console.log(err))
+        .finally(() => {
+            dispatch(actions.setLoading(false));
+        });
+}
+
 export const getLoggedin = params => async dispatch => {
     const { email, password } = params;
     const { actions } = userSlice;
+
     dispatch(actions.setLoading(true));
-    apiClient.post('user/login', {
+
+    getApiClient().post('user/login', {
         email,
         password
     })
         .then(response => {
+            const authToken = response?.data?.authToken;
+            console.log(response?.data?.authToken);
+            localStorage.setItem('token', authToken);
             dispatch(actions.login());
-            // set token into localstorage
+            dispatch(getUserProfile());
             console.log(response);
         })
         .catch(err => console.log(err))
@@ -64,9 +83,10 @@ export const getLoggedin = params => async dispatch => {
 }
 
 export const logout = () => async dispatch => {
-    // const { actions } = userSlice;
-    // dispatch(actions.logout());
-    // remove token from localstorage
+    const { actions } = userSlice;
+    dispatch(actions.logout());
+    dispatch(actions.setUserData(null));
+    localStorage.removeItem('token');
 }
 
 export default userSlice;
