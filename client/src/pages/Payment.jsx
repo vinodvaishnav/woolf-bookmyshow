@@ -3,60 +3,31 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Card, Button, Row, Col, Typography, List, Divider, message, Spin } from 'antd';
 import { CreditCardOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import getApiClient from '../util/api_client';
+import { createBooking } from '../redux/bookingSlice';
 
 const { Title, Text } = Typography;
 
 const Payment = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { isLoggedIn, data: user } = useSelector(state => state.userState);
+    const { userData } = useSelector(state => state.userState);
+    const { invoiceDetails } = useSelector(state => state.bookingState);
     const [loading, setLoading] = useState(false);
 
     // Get booking details from navigation state
-    const { showId, selectedSeats, totalAmount, showDetails } = location.state || {};
+    const { showId, selectedSeats, showDetails } = location.state || {};
 
     useEffect(() => {
         // Redirect if no booking details or not logged in
-        if (!isLoggedIn || !showId || !selectedSeats || selectedSeats.length === 0) {
+        if (!userData || !invoiceDetails || selectedSeats.length === 0) {
             message.error('Invalid booking details. Please try again.');
             navigate('/');
             return;
         }
-    }, [isLoggedIn, showId, selectedSeats, navigate]);
+    }, [userData, invoiceDetails, selectedSeats, navigate]);
 
     const handleProceedPayment = async () => {
-        setLoading(true);
-        try {
-            // Prepare the data for createBooking API
-            const bookingData = {
-                userId: user._id,
-                showId: showId,
-                showSeatIds: selectedSeats.map(seat => seat._id)
-            };
-
-            // Make the API call to create booking
-            const response = await getApiClient().post('/bookings', bookingData);
-
-            if (response.status === 201) {
-                message.success('Booking created successfully! Proceeding to payment...');
-
-                // Here you can navigate to actual payment gateway or confirmation page
-                // For now, we'll navigate back to home or show a success message
-                navigate('/', {
-                    state: {
-                        bookingCreated: true,
-                        bookingDetails: response.data
-                    }
-                });
-            }
-        } catch (error) {
-            console.error('Error creating booking:', error);
-            const errorMessage = error.response?.data?.message || 'Failed to create booking. Please try again.';
-            message.error(errorMessage);
-        } finally {
-            setLoading(false);
-        }
+        console.log("Payment processing..");
     };
 
     const handleGoBack = () => {
@@ -111,7 +82,7 @@ const Payment = () => {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Title level={4}>Total Amount</Title>
                             <Title level={4} style={{ color: '#1890ff' }}>
-                                ₹{totalAmount}
+                                ₹{0}
                             </Title>
                         </div>
                     </Card>

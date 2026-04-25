@@ -2,9 +2,9 @@ const bookingService = require('../services/booking.service');
 const InValidInputError = require('../exceptions/inValidInputError');
 
 const createBooking = async (req, res) => {
-    const { userId, showId, showSeatIds } = req.body;
+    const { loggedInUser, showId, showSeatIds } = req.body;
     try {
-        const bookingDetail = await bookingService.createBooking(userId, showId, showSeatIds);
+        const bookingDetail = await bookingService.createBooking(loggedInUser, showId, showSeatIds);
         res.status(201).json(bookingDetail);
     } catch (error) {
         if (error instanceof InValidInputError) {

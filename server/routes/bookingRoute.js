@@ -5,10 +5,12 @@ const {
     confirmBooking
 } = require('../controllers/bookingController');
 
+const { authenticateUser } = require('../middlewares/authUser');
+
 const bookingRoute = express.Router();
 
-bookingRoute.post('/', createBooking);
-bookingRoute.get('/details', getBookingDetails);
+bookingRoute.post('/', authenticateUser, createBooking);
+bookingRoute.get('/details', authenticateUser, getBookingDetails);
 bookingRoute.post('/confirm', confirmBooking);
 
 module.exports = bookingRoute;

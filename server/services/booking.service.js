@@ -25,14 +25,37 @@ const createBooking = async (userId, showId, showSeatIds) => {
         }
 
         // Mark the given seats as "Blocked" and statusUpdateTime with currentTime.
-        ShowSeatStatusModel.updateMany(
-            { showId: showId, _id: { $in: showSeatIds } },
+        const blockResult = await ShowSeatStatusModel.updateMany(
+            { show: showId, _id: { $in: showSeatIds } },
             { $set: { status: "blocked", statusUpdateTime: new Date() } },
             { session }
         );
 
+        console.log("Blocked Seats: ", showSeats);
+        console.log("Seat block update result:", blockResult);
+
+        // Debug: Log showSeats data
+        console.log("showSeats data:", JSON.stringify(showSeats.map(seat => ({
+            _id: seat._id,
+            show: seat.show ? { _id: seat.show._id, pricing: seat.show.pricing } : null,
+            seat: seat.seat ? { _id: seat.seat._id, type: seat.seat.type } : null,
+            status: seat.status
+        })), null, 2));
+
         // Calculate total amount and generate Invoice 
-        let amount = showSeats.reduce((total, seat) => total + seat.show.pricing.find(p => p.seat_type.toString() === seat.seat.seat_type.toString()).price, 0);
+        let amount = showSeats.reduce((total, seat) => {
+            if (!seat.show || !seat.show.pricing) {
+                throw new InValidInputError(`Show pricing not available for seat ${seat._id}`);
+            }
+            if (!seat.seat || !seat.seat.type) {
+                throw new InValidInputError(`Seat type not available for seat ${seat._id}`);
+            }
+            const pricing = seat.show.pricing.find(p => p.seat_type && p.seat_type.toString() === seat.seat.type.toString());
+            if (!pricing) {
+                throw new InValidInputError(`No pricing found for seat type ${seat.seat.type} in show ${seat.show._id}`);
+            }
+            return total + pricing.price;
+        }, 0);
 
         // Create a booking with status pending
         const booking = new BookingModel({

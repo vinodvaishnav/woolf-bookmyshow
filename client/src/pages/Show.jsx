@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { getShowDetail, getShowSeats } from "../redux/showSlice";
 import { groupSeatsByRow } from "../util/data_format";
+import { createBooking } from "../redux/bookingSlice";
+
 import Loading from "../components/Loading";
 import {
     Typography,
@@ -26,7 +28,8 @@ const Show = () => {
     const navigate = useNavigate();
     const { showId } = useParams();
     const { showDetail, showSeats, loading } = useSelector(state => state.showState);
-    const { isLoggedIn, data: user } = useSelector(state => state.userState);
+    const { userData } = useSelector(state => state.userState);
+    const { invoiceDetails } = useSelector(state => state.bookingState);
 
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [seatsByRow, setSeatsByRow] = useState([]);
@@ -43,6 +46,18 @@ const Show = () => {
             setSeatsByRow(groupSeatsByRow(showSeats));
         }
     }, [showDetail, showSeats]);
+
+    useEffect(() => {
+        if (invoiceDetails) {
+            navigate('/payment', {
+                state: {
+                    showId,
+                    selectedSeats,
+                    showDetails: showDetail
+                }
+            });
+        }
+    }, [invoiceDetails, navigate]);
 
     if (loading) {
         return <Loading />;
@@ -93,7 +108,7 @@ const Show = () => {
             return;
         }
 
-        if (!isLoggedIn || !user._id) {
+        if (!userData._id) {
             Modal.warning({
                 title: 'Login Required',
                 content: 'Please login to complete your booking.',
@@ -103,15 +118,21 @@ const Show = () => {
             return;
         }
 
+        // block the seats for 15 minutes or until payment is completed
+        dispatch(createBooking({
+            showId,
+            showSeatIds: selectedSeats.map(s => s._id)
+        }));
+
         // Navigate to payment page with booking details
-        navigate('/payment', {
-            state: {
-                showId,
-                selectedSeats,
-                totalAmount: calculateTotalPrice(),
-                showDetails: showDetail
-            }
-        });
+        // navigate('/payment', {
+        //     state: {
+        //         showId,
+        //         selectedSeats,
+        //         totalAmount: calculateTotalPrice(),
+        //         showDetails: showDetail
+        //     }
+        // });
     };
 
     const getSeatButtonClass = (seat) => {
