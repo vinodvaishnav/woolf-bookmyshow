@@ -4,7 +4,7 @@ const createShow = async (req, res) => {
     try {
         const { theaterId, movieId, screenId, showTime } = req.body;
         const show = await showService.createShow(theaterId, movieId, screenId, showTime);
-        console.log("Created show: ", show);
+        // console.log("Created show: ", show);
         res.status(201).json(show);
     } catch (error) {
         res.status(500).json({ error: error.message });

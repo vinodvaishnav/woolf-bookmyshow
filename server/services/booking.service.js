@@ -17,11 +17,15 @@ const getBookingDetails = async (userId, bookingId) => {
         .findOne({ _id: bookingId, user: userId })
         .populate({
             path: 'show',
-            populate: {
+            populate: [{
                 path: 'movie',
                 model: 'movies',
                 select: 'name thumbnail'
-            }
+            }, {
+                path: 'theater',
+                model: 'theaters',
+                select: 'name'
+            }]
         })
         .populate({
             path: 'seats',
@@ -33,7 +37,7 @@ const getBookingDetails = async (userId, bookingId) => {
                 }
             ]
         });
-    console.log("Booking details: ", booking);
+    // console.log("Booking details: ", booking);
     return booking;
 }
 
@@ -62,16 +66,16 @@ const createBooking = async (userId, showId, showSeatIds) => {
             { session }
         );
 
-        console.log("Blocked Seats: ", showSeats);
-        console.log("Seat block update result:", blockResult);
+        // console.log("Blocked Seats: ", showSeats);
+        // console.log("Seat block update result:", blockResult);
 
         // Debug: Log showSeats data
-        console.log("showSeats data:", JSON.stringify(showSeats.map(seat => ({
-            _id: seat._id,
-            show: seat.show ? { _id: seat.show._id, pricing: seat.show.pricing } : null,
-            seat: seat.seat ? { _id: seat.seat._id, type: seat.seat.type } : null,
-            status: seat.status
-        })), null, 2));
+        // console.log("showSeats data:", JSON.stringify(showSeats.map(seat => ({
+        //     _id: seat._id,
+        //     show: seat.show ? { _id: seat.show._id, pricing: seat.show.pricing } : null,
+        //     seat: seat.seat ? { _id: seat.seat._id, type: seat.seat.type } : null,
+        //     status: seat.status
+        // })), null, 2));
 
         // Calculate total amount and generate Invoice 
         let amount = showSeats.reduce((total, seat) => {
@@ -166,13 +170,13 @@ const confirmBooking = async (userId, invoiceId, paymentDetails) => {
     // and return confirmed Booking details.
     // else return another payment invoice with remaining amount.
 
-    console.log("Confirm Booking - Service Layer: ", { userId, invoiceId, paymentDetails });
+    // console.log("Confirm Booking - Service Layer: ", { userId, invoiceId, paymentDetails });
     const invoice = await InvoiceModel.findById(invoiceId);
     if (!invoice) {
         throw new InValidInputError("Invoice not found for the given booking.");
     }
 
-    console.log("Invoice details: ", invoice);
+    // console.log("Invoice details: ", invoice);
 
     verifyPayment(invoice, paymentDetails);
 
@@ -191,17 +195,17 @@ const confirmBooking = async (userId, invoiceId, paymentDetails) => {
         });
         await payment.save({ session });
 
-        console.log("Payment record created: ", payment);
+        // console.log("Payment record created: ", payment);
 
         const updatedBooking = await BookingModel.findByIdAndUpdate(invoice.booking, { status: "completed" }, { session, new: true });
 
-        console.log("Booking updated to completed: ", updatedBooking);
+        // console.log("Booking updated to completed: ", updatedBooking);
 
         for (const seat of updatedBooking.seats) {
             await ShowSeatStatusModel.updateOne({ _id: seat }, { status: "booked" }, { session });
         }
 
-        console.log("Show seat status updated to booked for booking: ", invoice.booking);
+        // console.log("Show seat status updat¬ed to booked for booking: ", invoice.booking);
 
         await session.commitTransaction();
 
@@ -231,7 +235,7 @@ const updateBookingFullfilled = async (bookingId, numberOfGuest) => {
 }
 
 const findBookings = async (filter = {}, limit = 20, orderBy = "_id", diretion = 1) => {
-    console.log("Finding bookings with filter: ", filter);
+    // console.log("Finding bookings with filter: ", filter);
     const bookings = await BookingModel
         .find(filter)
         .populate({
@@ -248,7 +252,7 @@ const findBookings = async (filter = {}, limit = 20, orderBy = "_id", diretion =
             }]
         });
 
-    console.log("Booking details: ", bookings);
+    // console.log("Booking details: ", bookings);
     return bookings;
 }
 

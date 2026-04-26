@@ -88,4 +88,18 @@ export const getBookings = () => async (dispatch) => {
         })
 }
 
+export const fetchBookingDetails = (bookingId) => async (dispatch) => {
+    const { actions } = bookingSlice;
+    dispatch(actions.setLoading(true));
+
+    getApiClient().get(`bookings/${bookingId}`)
+        .then((response) => {
+            dispatch(actions.setBookingDetails(response.data));
+        })
+        .catch(error => console.log(error))
+        .finally(() => {
+            dispatch(actions.setLoading(false));
+        })
+}
+
 export default bookingSlice;

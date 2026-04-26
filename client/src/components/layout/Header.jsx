@@ -98,7 +98,7 @@ const Header = () => {
                                 icon={<UserOutlined />}
                                 style={{ marginRight: '8px' }}
                             />
-                            {userData?.name || 'User'}
+                            {userData?.firstName || 'User'}
                         </Button>
                     </Dropdown>
                 ) : (
