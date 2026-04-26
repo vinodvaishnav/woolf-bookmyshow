@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Card, Button, Row, Col, Typography, List, Divider, message, Spin } from 'antd';
 import { CreditCardOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { createBooking } from '../redux/bookingSlice';
+import { confirmBooking } from '../redux/bookingSlice';
+import getApiClient from '../util/api_client';
 
 const { Title, Text } = Typography;
 
@@ -11,23 +12,78 @@ const Payment = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { userData } = useSelector(state => state.userState);
-    const { invoiceDetails } = useSelector(state => state.bookingState);
+    const { invoiceDetails, bookingDetail } = useSelector(state => state.bookingState);
+    const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
 
     // Get booking details from navigation state
     const { showId, selectedSeats, showDetails } = location.state || {};
 
     useEffect(() => {
-        // Redirect if no booking details or not logged in
-        if (!userData || !invoiceDetails || selectedSeats.length === 0) {
-            message.error('Invalid booking details. Please try again.');
-            navigate('/');
-            return;
+        // Load Razorpay script
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        document.body.appendChild(script);
+
+        return () => {
+            document.body.removeChild(script);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!invoiceDetails || invoiceDetails.totalAmount === 0) {
+            // message.error('Invalid payment details');
+            navigate(-1);
         }
-    }, [userData, invoiceDetails, selectedSeats, navigate]);
+    }, [invoiceDetails]);
 
     const handleProceedPayment = async () => {
-        console.log("Payment processing..");
+        try {
+            const apiClient = getApiClient();
+            const { order, razorpayKey } = invoiceDetails;
+            // Razorpay options
+            const options = {
+                key: razorpayKey,
+                amount: order.amount,
+                currency: order.currency,
+                name: 'Book My Ticket',
+                description: 'Movie Ticket Booking',
+                order_id: order.id,
+
+                handler: async function (response) {
+                    try {
+                        dispatch(confirmBooking({
+                            invoiceId: invoiceDetails._id,
+                            paymentDetails: {
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature
+                            }
+                        }));
+                    } catch (error) {
+                        console.error('Payment verification error:', error);
+                        message.error('Payment verification failed');
+                    }
+                },
+                prefill: {
+                    name: userData?.name || '',
+                    email: userData?.email || '',
+                    contact: userData?.phone || '',
+                },
+                theme: {
+                    color: '#1890ff',
+                },
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+        } catch (error) {
+            console.error('Payment error:', error);
+            message.error('Failed to initiate payment');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleGoBack = () => {
@@ -46,6 +102,19 @@ const Payment = () => {
         <div style={{ padding: '40px 20px', maxWidth: '800px', margin: '0 auto' }}>
             <Row gutter={[32, 32]}>
                 <Col xs={24} lg={16}>
+                    {
+                        bookingDetail && (
+                            <Card title="Booking Confirmed!" bordered={false} style={{ marginBottom: '24px', backgroundColor: '#f6ffed', borderColor: '#b7eb8f' }}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <CreditCardOutlined style={{ fontSize: '24px', color: '#52c41a', marginRight: '12px' }} />
+                                    <div>
+                                        <Title level={4} style={{ marginBottom: 0 }}>Your booking is confirmed!</Title>
+                                        <Text type="success">Enjoy your movie experience.</Text>
+                                    </div>
+                                </div>
+                            </Card>
+                        )
+                    }
                     <Card title="Booking Summary" bordered={false}>
                         <div style={{ marginBottom: '24px' }}>
                             <Title level={4}>{showDetails.movie?.name}</Title>
@@ -82,7 +151,7 @@ const Payment = () => {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Title level={4}>Total Amount</Title>
                             <Title level={4} style={{ color: '#1890ff' }}>
-                                ₹{0}
+                                ₹{invoiceDetails?.totalAmount}
                             </Title>
                         </div>
                     </Card>

@@ -7,10 +7,15 @@ const bookingSlice = createSlice({
         showId: null,
         selectedSeats: [],
         invoiceDetails: null,
-        loading: false
+        loading: false,
+        bookingDetail: null,
     },
     reducers: {
         // Define reducers if needed for booking state management
+        setBookingDetails: (state, action) => {
+            state.bookingDetail = action.payload;
+        },
+
         setSelectedSeats: (state, action) => {
             state.selectedSeats = action.payload;
         },
@@ -53,7 +58,10 @@ export const confirmBooking = (bookingData) => async (dispatch) => {
 
     getApiClient().post('bookings/confirm', bookingData)
         .then((response) => {
-            // Handle successful booking confirmation if needed
+            dispatch(actions.setBookingDetails(response.data));
+            // unset invoiceDetails and selectedSeats
+            dispatch(actions.setInvoiceDetails(null));
+            dispatch(actions.setSelectedSeats([]));
         })
         .catch(error => console.log(error))
         .finally(() => {

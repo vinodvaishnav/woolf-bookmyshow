@@ -11,6 +11,6 @@ const bookingRoute = express.Router();
 
 bookingRoute.post('/', authenticateUser, createBooking);
 bookingRoute.get('/details', authenticateUser, getBookingDetails);
-bookingRoute.post('/confirm', confirmBooking);
+bookingRoute.post('/confirm', authenticateUser, confirmBooking);
 
 module.exports = bookingRoute;

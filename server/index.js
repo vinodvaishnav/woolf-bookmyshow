@@ -28,6 +28,7 @@ const regionRoutes = require('./routes/regionRoute');
 const showRoutes = require('./routes/showRoute');
 const bookingRoutes = require('./routes/bookingRoute');
 const theaterRoutes = require('./routes/theaterRoute');
+const paymentRoutes = require('./routes/paymentRoute');
 const cors = require('cors');
 
 try {
@@ -58,6 +59,7 @@ try {
     app.use('/api/theaters', theaterRoutes);
     app.use('/api/user', userRoutes);
     app.use('/api/bookings', bookingRoutes);
+    app.use('/api/payments', paymentRoutes);
 
     app.use((err, req, res, next) => {
         if (res.headersSent) {

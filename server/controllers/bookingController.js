@@ -1,10 +1,12 @@
 const bookingService = require('../services/booking.service');
 const InValidInputError = require('../exceptions/inValidInputError');
+const Razorpay = require('razorpay');
 
 const createBooking = async (req, res) => {
     const { loggedInUser, showId, showSeatIds } = req.body;
     try {
         const bookingDetail = await bookingService.createBooking(loggedInUser, showId, showSeatIds);
+        console.log("========= Booking Detail: ", bookingDetail);
         res.status(201).json(bookingDetail);
     } catch (error) {
         if (error instanceof InValidInputError) {
@@ -17,9 +19,9 @@ const createBooking = async (req, res) => {
 }
 
 const getBookingDetails = async (req, res) => {
-    const { userId, bookingId } = req.body;
+    const { loggedInUser, bookingId } = req.body;
     try {
-        const bookingDetail = await bookingService.getBookingDetails(userId, bookingId);
+        const bookingDetail = await bookingService.getBookingDetails(loggedInUser, bookingId);
         if (!bookingDetail) {
             return res.status(404).json({ message: "Booking not found" });
         }
@@ -32,11 +34,11 @@ const getBookingDetails = async (req, res) => {
 }
 
 const confirmBooking = async (req, res) => {
-    const { userId, bookingId, paymentDetails } = req.body;
+    const { loggedInUser, invoiceId, paymentDetails } = req.body;
     // @TODO: PaymentDetails can be encrypted to avoid any manipulation from client side. 
     // It can also be stored in DB in encrypted format for security reasons and decrypted here before processing.
     try {
-        const confirmedBooking = await bookingService.confirmBooking(userId, bookingId, paymentDetails);
+        const confirmedBooking = await bookingService.confirmBooking(loggedInUser, invoiceId, paymentDetails);
         res.status(200).json(confirmedBooking);
     } catch (error) {
         console.log("Error in confirmBooking controller: ", error);

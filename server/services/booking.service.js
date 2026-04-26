@@ -4,9 +4,39 @@ const InvoiceModel = require('../models/invoiceModel');
 const InValidInputError = require('../exceptions/inValidInputError');
 const PaymentModel = require('../models/paymentModel');
 const mongoose = require('mongoose');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
+
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+const getBookingDetails = async (userId, bookingId) => {
+    console.log("Get Booking Details - Service Layer: ", { userId, bookingId });
+    const booking = await BookingModel
+        .findOne({ _id: bookingId, user: userId })
+        .populate({
+            path: 'show',
+            populate: {
+                path: 'movie',
+                model: 'movies',
+                select: 'name thumbnail'
+            }
+        })
+        .populate({
+            path: 'seats',
+            populate: {
+                path: 'seat',
+                model: 'seats',
+                select: 'row number type'
+            }
+        });
+    console.log("Booking details: ", booking);
+    return booking;
+}
 
 const createBooking = async (userId, showId, showSeatIds) => {
-
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
@@ -68,6 +98,14 @@ const createBooking = async (userId, showId, showSeatIds) => {
 
         await booking.save({ session });
 
+        const options = {
+            amount: amount * 100, // Razorpay expects amount in paisa
+            currency: 'INR',
+            receipt: `receipt_${booking._id}`,
+        };
+
+        const order = await razorpay.orders.create(options);
+
         // Create an invoice for the booking
         const invoice = new InvoiceModel({
             booking: booking._id,
@@ -75,17 +113,26 @@ const createBooking = async (userId, showId, showSeatIds) => {
             tax: 0, // Set tax as needed
             couponCode: null, // Set coupon code if applicable
             discount: 0, // Set discount as needed
-            totalAmount: amount
+            totalAmount: amount,
+
         });
 
         await invoice.save({ session });
 
         await session.commitTransaction();
 
-        // @TODO: Return booking details and showInformation along with invoice details if needed.
-        return invoice;
+        const response = {
+            ...invoice.toObject(),
+            order,
+            razorpayKey: process.env.RAZORPAY_KEY_ID
+        }
+
+        return response;
+
     } catch (error) {
-        await session.abortTransaction();
+        if (session.inTransaction()) {
+            await session.abortTransaction();
+        }
         console.log("Error in createBooking service: ", error);
         throw error;
     } finally {
@@ -93,40 +140,75 @@ const createBooking = async (userId, showId, showSeatIds) => {
     }
 }
 
-const confirmBooking = async (userId, bookingId, paymentDetails) => {
+const verifyPayment = async (invoice, paymentDetails) => {
+    try {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = paymentDetails;
+
+        const sign = razorpay_order_id + '|' + razorpay_payment_id;
+
+        const expectedSign = crypto
+            .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+            .update(sign.toString())
+            .digest('hex');
+
+        if (razorpay_signature !== expectedSign) {
+            throw new Error('Payment verification failed');
+        }
+
+    } catch (error) {
+        throw error;
+    }
+}
+
+const confirmBooking = async (userId, invoiceId, paymentDetails) => {
     // verify the amount paid is equal to invoice amount then update Booking and showSeat Status 
     // and return confirmed Booking details.
     // else return another payment invoice with remaining amount.
 
+    console.log("Confirm Booking - Service Layer: ", { userId, invoiceId, paymentDetails });
+    const invoice = await InvoiceModel.findById(invoiceId);
+    if (!invoice) {
+        throw new InValidInputError("Invoice not found for the given booking.");
+    }
+
+    console.log("Invoice details: ", invoice);
+
+    verifyPayment(invoice, paymentDetails);
+
+    console.log("Payment verified successfully for invoice: ");
     // create a payment entry
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-        // @TODO: Log the transaction in files for audit and debugging purpose.
-
         const payment = new PaymentModel({
             user: userId,
-            booking: bookingId,
-            invoice: paymentDetails.invoiceId,
-            amount: paymentDetails.amount,
-            paymentMethod: paymentDetails.method,
-            paymentStatus: paymentDetails.status,
-            paymentRef: paymentDetails.ref
-        })
-        await payment.save(session);
+            booking: invoice.booking,
+            invoice: invoice._id,
+            amount: invoice.totalAmount,
+            paymentStatus: 'success',
+            paymentRef: paymentDetails.razorpay_payment_id
+        });
+        await payment.save({ session });
 
-        const invoice = await InvoiceModel.find({ booking: bookingId });
-        if (invoice.totalAmount !== paymentDetails.amount || paymentDetails.status.toLowerCase() !== "success") {
-            throw new InValidInputError("Payment details do not match the invoice amount or payment status.");
-            // return reminaing payment details if needed.
+        console.log("Payment record created: ", payment);
+
+        const updatedBooking = await BookingModel.findByIdAndUpdate(invoice.booking, { status: "completed" }, { session, new: true });
+
+        console.log("Booking updated to completed: ", updatedBooking);
+
+        for (const seat of updatedBooking.seats) {
+            await ShowSeatStatusModel.updateOne({ _id: seat }, { status: "booked" }, { session });
         }
 
-        await BookingModel.findByIdAndUpdate(bookingId, { status: "completed" }, { session });
-        await ShowSeatStatusModel.updateMany({ booking: bookingId }, { status: "booked" }, { session });
+        console.log("Show seat status updated to booked for booking: ", invoice.booking);
 
-        session.commitTransaction();
+        await session.commitTransaction();
+
+        return invoice;
     } catch (error) {
-        await session.abortTransaction();
+        if (session.inTransaction()) {
+            await session.abortTransaction();
+        }
         console.log("Error in confirmBooking service: ", error);
         throw error;
     } finally {
@@ -151,28 +233,7 @@ const findBookings = async (filter = {}, limit = 20, orderBy = "_id", diretion =
     // return bookings based on given parameteres.
 }
 
-const getBookingDetails = async (userId, bookingId) => {
-    const booking = await BookingModel
-        .findOne({ _id: bookingId, user: userId })
-        .populate({
-            path: 'show',
-            populate: {
-                path: 'movie',
-                model: 'movies',
-                select: 'name thumbnail'
-            }
-        })
-        .populate({
-            path: 'seats',
-            populate: {
-                path: 'seat',
-                model: 'seats',
-                select: 'row number type'
-            }
-        });
 
-    return booking;
-}
 
 module.exports = {
     createBooking,

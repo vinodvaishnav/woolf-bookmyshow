@@ -23,7 +23,7 @@ const paymentSchema = mongoose.Schema({
     },
     paymentMethod: {
         type: String,
-        require: true
+        require: false
     },
     paymentRef: {
         type: String,
