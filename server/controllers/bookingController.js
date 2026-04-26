@@ -6,7 +6,6 @@ const createBooking = async (req, res) => {
     const { loggedInUser, showId, showSeatIds } = req.body;
     try {
         const bookingDetail = await bookingService.createBooking(loggedInUser, showId, showSeatIds);
-        console.log("========= Booking Detail: ", bookingDetail);
         res.status(201).json(bookingDetail);
     } catch (error) {
         if (error instanceof InValidInputError) {
@@ -18,8 +17,27 @@ const createBooking = async (req, res) => {
     }
 }
 
+const getBookings = async (req, res) => {
+    const { loggedInUser } = req.body;
+    try {
+        const filter = { user: loggedInUser };
+        const sort = { createdAt: -1 };
+        const limit = 10;
+        const orderBy = 'createdAt';
+        const direction = -1;
+
+        const bookings = await bookingService.findBookings(filter, limit, orderBy, direction);
+
+        res.status(200).json(bookings);
+    } catch (error) {
+        console.log("Error in getBookings controller: ", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
 const getBookingDetails = async (req, res) => {
-    const { loggedInUser, bookingId } = req.body;
+    const { loggedInUser } = req.body;
+    const bookingId = req.params.bookingId;
     try {
         const bookingDetail = await bookingService.getBookingDetails(loggedInUser, bookingId);
         if (!bookingDetail) {
@@ -49,5 +67,6 @@ const confirmBooking = async (req, res) => {
 module.exports = {
     createBooking,
     getBookingDetails,
+    getBookings,
     confirmBooking
 }

@@ -13,7 +13,6 @@ const razorpay = new Razorpay({
 });
 
 const getBookingDetails = async (userId, bookingId) => {
-    console.log("Get Booking Details - Service Layer: ", { userId, bookingId });
     const booking = await BookingModel
         .findOne({ _id: bookingId, user: userId })
         .populate({
@@ -26,11 +25,13 @@ const getBookingDetails = async (userId, bookingId) => {
         })
         .populate({
             path: 'seats',
-            populate: {
-                path: 'seat',
-                model: 'seats',
-                select: 'row number type'
-            }
+            populate: [
+                {
+                    path: 'seat',
+                    model: 'screen_seats',
+                    select: 'row number type'
+                }
+            ]
         });
     console.log("Booking details: ", booking);
     return booking;
@@ -229,11 +230,26 @@ const updateBookingFullfilled = async (bookingId, numberOfGuest) => {
     // Update the booking with numberOfGuest Welcomed
 }
 
-const findBookings = async (filter = {}, limit = 20, orderBy = "_id", diretion = "1") => {
-    // return bookings based on given parameteres.
+const findBookings = async (filter = {}, limit = 20, orderBy = "_id", diretion = 1) => {
+    const bookings = await BookingModel
+        .find(filter)
+        .populate({
+            path: 'show',
+            select: 'theater screen showTime',
+            populate: [{
+                path: 'movie',
+                model: 'movies',
+                select: 'name thumbnail'
+            }, {
+                path: 'theater',
+                model: 'theaters',
+                select: 'name region'
+            }]
+        });
+
+    console.log("Booking details: ", bookings);
+    return bookings;
 }
-
-
 
 module.exports = {
     createBooking,
