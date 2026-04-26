@@ -1,7 +1,6 @@
 # Readme
 
 This is a replica project of Bookmyshow application.
-Having following functionalities:
 
 FE Technologies:
 React
@@ -12,25 +11,25 @@ NodeJs
 Express
 MongoDB
 
+## Note
+This Project repository contains both Server and Client code in their respective directories. And need to install their dependencies seprate.
+
 ## setup instructions:
 Server:
 1. Create a Mondo DB database using MongoDB Atlas. 
-2. create .env file using default.env updating your parameters
-3. run "npm run seed" command to seed permissions and other base data
-4. create test data
+2. Go to ./server directory
+3. create .env file using default.env updating your parameters
+4. run "npm run install" to install all the server dependencies
+5. run "npm run seed" command to seed permissions and create Admin account
+6. run "npm run feed" command to run script that can create some test data
+(Update ./server/scripts/createTestData.js to create test data)
+7. Now system has all required basic dataset ready, just run the server by using following command:
+"npm run dev"
 
+## client instructions:
+1. Go to ./client directory
+2. run "npm run install" to install all the client dependencies
+3. run "npm run start" to run application on http://localhost:3000
 
-## Change Git repository
-* Create a bare source repository:
-    git clone --bare https://github.com/exampleuser/old-repository.git
-    cd old-repository.git
-* Mirror push to new repository:
-    git push --mirror https://github.com/exampleuser/new-repository.git
-* Remove temporary local repository:
-    cd ..
-    rm -rf old-repository.git
-
-## Github SSH key setup:
-    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-    pbcopy < ~/.ssh/id_rsa.pub
-    Past  SSH Key in github setting
+## Note
+Code contains some commented code for debugging and TODOs for future enhancments.
