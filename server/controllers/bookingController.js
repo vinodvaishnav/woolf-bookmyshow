@@ -19,6 +19,7 @@ const createBooking = async (req, res) => {
 
 const getBookings = async (req, res) => {
     const { loggedInUser } = req.body;
+    console.log("Inside getBookings controller =========", loggedInUser);
     try {
         const filter = { user: loggedInUser };
         const sort = { createdAt: -1 };

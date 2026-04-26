@@ -9,6 +9,7 @@ const bookingSlice = createSlice({
         invoiceDetails: null,
         loading: false,
         bookingDetail: null,
+        bookings: [],
     },
     reducers: {
         // Define reducers if needed for booking state management
@@ -30,6 +31,10 @@ const bookingSlice = createSlice({
 
         setLoading: (state, action) => {
             state.loading = action.payload;
+        },
+
+        setBookings: (state, action) => {
+            state.bookings = action.payload;
         }
     }
 });
@@ -67,7 +72,20 @@ export const confirmBooking = (bookingData) => async (dispatch) => {
         .finally(() => {
             dispatch(actions.setLoading(false));
         })
+}
 
+export const getBookings = () => async (dispatch) => {
+    const { actions } = bookingSlice;
+    dispatch(actions.setLoading(true));
+
+    getApiClient().get('bookings')
+        .then((response) => {
+            dispatch(actions.setBookings(response.data));
+        })
+        .catch(error => console.log(error))
+        .finally(() => {
+            dispatch(actions.setLoading(false));
+        })
 }
 
 export default bookingSlice;

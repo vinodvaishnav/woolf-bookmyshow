@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Layout, Menu, Button, Avatar, Dropdown } from 'antd';
-import { SketchOutlined, UserOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
+import { SketchOutlined, UserOutlined, LogoutOutlined, LoginOutlined, ScheduleOutlined } from '@ant-design/icons';
 import { logout } from '../../redux/userSlice';
 
 const { Header: AntHeader } = Layout;
@@ -25,6 +25,12 @@ const Header = () => {
     ];
 
     const userMenuItems = [
+        {
+            key: 'bookings',
+            label: 'My Bookings',
+            icon: <ScheduleOutlined />,
+            onClick: () => navigate('/bookings'),
+        },
         {
             key: 'profile',
             label: 'Profile',

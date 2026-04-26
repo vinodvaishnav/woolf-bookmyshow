@@ -73,7 +73,6 @@ const registerUser = async (req, res, next) => {
 const getUserProfile = async (req, res) => {
     try {
         const userId = req.body.loggedInUser;
-        console.log("===== userId", userId);
         const user = await UserModel.findById(userId).select("-password").populate('role', 'name');
         res.send({
             success: true,

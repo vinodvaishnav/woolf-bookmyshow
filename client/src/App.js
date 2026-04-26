@@ -9,6 +9,7 @@ import Show from './pages/Show';
 import Payment from './pages/Payment';
 import AdminDashboard from './pages/Admin/Dashboard';
 import PartnerDashboard from './pages/Partner/Dashboard';
+import Bookings from './pages/Bookings';
 
 function App() {
   return (
@@ -18,10 +19,11 @@ function App() {
 
         <Route path='/movie/:id' element={<Movie />} />
         <Route path='/show/:showId' element={<Show />} />
-        <Route path='/payment' element={<Payment />} />
+        <Route path='/payment' element={<UserLockout><Payment /></UserLockout>} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
-        <Route path='/profile' element={<Register />} />
+        <Route path='/profile' element={<UserLockout><Register /></UserLockout>} />
+        <Route path='/bookings' element={<UserLockout><Bookings /></UserLockout>} />
         <Route path='/admin' element={<UserLockout><AdminDashboard /></UserLockout>} />
         <Route path='/partner' element={<UserLockout><PartnerDashboard /></UserLockout>} />
         <Route path='test' element={<UserLockout><div>Test</div></UserLockout>} />

@@ -231,6 +231,7 @@ const updateBookingFullfilled = async (bookingId, numberOfGuest) => {
 }
 
 const findBookings = async (filter = {}, limit = 20, orderBy = "_id", diretion = 1) => {
+    console.log("Finding bookings with filter: ", filter);
     const bookings = await BookingModel
         .find(filter)
         .populate({
